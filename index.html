@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nicole Surawski — Product Management Portfolio</title>
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 940px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+      color: #fff;
+    }
+    .hero .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+    .hero h1 { font-size: 2.6rem; font-weight: 700; margin-bottom: 8px; }
+    .hero .tagline { font-size: 1.1rem; opacity: 0.9; margin-bottom: 28px; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .hero .nav a {
+      color: #fff; text-decoration: none; margin: 0 10px; padding: 8px 20px;
+      border: 1.5px solid rgba(255,255,255,0.45); border-radius: 6px; font-size: 0.9rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .hero .nav a:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+
+    /* ── Sections ── */
+    section { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px; }
+    section + section { border-top: 1px solid var(--color-border); }
+    h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; }
+    .section-intro { color: var(--color-muted); font-size: 1.02rem; margin-bottom: 28px; max-width: 760px; }
+
+    /* ── Stat cards ── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px;
+    }
+    .stat-card {
+      background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 10px;
+      padding: 20px; text-align: center;
+    }
+    .stat-card .number { font-size: 1.6rem; font-weight: 700; color: var(--color-accent); }
+    .stat-card .label { font-size: 0.82rem; color: var(--color-muted); margin-top: 4px; }
+
+    /* ── Strengths ── */
+    .strengths-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;
+    }
+    .strength-card {
+      background: var(--color-accent-light); border-radius: 10px; padding: 16px 20px;
+      font-weight: 600; font-size: 0.95rem; color: var(--color-accent); text-align: center;
+    }
+
+    /* ── Mapping table ── */
+    .mapping-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .mapping-table th {
+      text-align: left; padding: 12px 14px; background: var(--color-accent); color: #fff;
+      font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .mapping-table th:first-child { border-radius: 8px 0 0 0; }
+    .mapping-table th:last-child { border-radius: 0 8px 0 0; }
+    .mapping-table td {
+      padding: 14px; border-bottom: 1px solid var(--color-border); vertical-align: top;
+    }
+    .mapping-table tr:last-child td { border-bottom: none; }
+    .mapping-table tr:hover td { background: var(--color-accent-light); }
+
+    /* ── Project cards ── */
+    .project-card {
+      background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 12px;
+      padding: 28px; margin-bottom: 24px; transition: box-shadow 0.2s;
+    }
+    .project-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .project-card .header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+    .project-card .num {
+      font-size: 1.8rem; font-weight: 800; color: var(--color-accent); opacity: 0.3; line-height: 1;
+    }
+    .project-card h3 { font-size: 1.1rem; margin-bottom: 2px; }
+    .project-card .category {
+      display: inline-block; background: var(--color-accent-light); color: var(--color-accent);
+      font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .project-card .desc { color: var(--color-muted); font-size: 0.93rem; margin-bottom: 14px; }
+    .project-card .skills-label { font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
+    .project-card ul { padding-left: 18px; color: var(--color-muted); font-size: 0.88rem; }
+    .project-card li { margin-bottom: 4px; }
+
+    /* ── CTA / Contact ── */
+    .cta-box {
+      background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 12px;
+      padding: 36px; text-align: center;
+    }
+    .cta-box p { color: var(--color-muted); font-size: 0.95rem; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-links { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .cta-links a {
+      padding: 10px 28px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .cta-links a.primary { background: var(--color-accent); color: #fff; }
+    .cta-links a.secondary { background: transparent; color: var(--color-accent); border: 1.5px solid var(--color-accent); }
+    .cta-links a:hover { opacity: 0.85; }
+    .cta-availability { font-size: 0.85rem; color: var(--color-muted); margin-top: 16px; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 40px 24px; font-size: 0.82rem; color: var(--color-muted);
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero .nav a { display: block; margin: 6px auto; max-width: 200px; }
+      section { padding: 40px 20px; }
+      .mapping-table { font-size: 0.8rem; }
+      .mapping-table td, .mapping-table th { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="label">Product Management</div>
+    <h1>Nicole Surawski</h1>
+    <p class="tagline">Solutions Consultant transitioning to Product Management | B2B SaaS</p>
+    <div class="nav">
+      <a href="#impact">Impact</a>
+      <a href="#work-samples">Work Samples</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- About -->
+  <section>
+    <h2>About This Portfolio</h2>
+    <p class="section-intro">
+      I'm a Solutions Consultant with a track record of managing $1.5M in monthly client spend, maintaining a 5/5 CSAT, and turning complex technical problems into clean solutions that protect performance and grow accounts.
+    </p>
+    <p class="section-intro">
+      This portfolio demonstrates the PM skills I've been building hands-on &mdash; not just learning about. Every artifact here was created from scratch: structured from a real problem, scoped with intent, and built to show how I think as a product manager.
+    </p>
+    <p style="margin-top: 16px;"><strong>Target role:</strong> B2B SaaS Product Manager</p>
+  </section>
+
+  <!-- Core Strengths -->
+  <section>
+    <h2>Core Strengths</h2>
+    <div class="strengths-grid">
+      <div class="strength-card">Technical Fluency</div>
+      <div class="strength-card">Prioritization</div>
+      <div class="strength-card">Stakeholder Management</div>
+      <div class="strength-card">Go-to-Market Thinking</div>
+    </div>
+  </section>
+
+  <!-- Impact Snapshot -->
+  <section id="impact">
+    <h2>Impact Snapshot</h2>
+    <p class="section-intro">Measurable results from my Solutions Consulting career &mdash; the foundation that informs how I approach product work.</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="number">$1.5M</div>
+        <div class="label">Monthly spend managed</div>
+      </div>
+      <div class="stat-card">
+        <div class="number">~30</div>
+        <div class="label">Accounts managed</div>
+      </div>
+      <div class="stat-card">
+        <div class="number">5/5</div>
+        <div class="label">CSAT score</div>
+      </div>
+      <div class="stat-card">
+        <div class="number">5 hrs</div>
+        <div class="label">Average SLA</div>
+      </div>
+      <div class="stat-card">
+        <div class="number">$120K</div>
+        <div class="label">Incremental monthly budget won</div>
+      </div>
+      <div class="stat-card">
+        <div class="number">100%</div>
+        <div class="label">Account retention on owned book</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Consulting → PM Mapping -->
+  <section>
+    <h2>From Solutions Consulting to PM</h2>
+    <p class="section-intro">The best B2B PMs have lived on the customer side. Here's how my consulting experience directly maps to core PM competencies:</p>
+    <table class="mapping-table">
+      <thead>
+        <tr>
+          <th>Consulting Experience</th>
+          <th>PM Competency</th>
+          <th>Why It Matters</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Diagnosing client technical issues &amp; building fixes</td>
+          <td>Technical problem-solving &amp; root cause analysis</td>
+          <td>PMs must understand what's buildable and why it breaks</td>
+        </tr>
+        <tr>
+          <td>Owning 30 accounts with competing priorities</td>
+          <td>Ruthless prioritization under constraints</td>
+          <td>PMs balance stakeholder needs against limited eng capacity</td>
+        </tr>
+        <tr>
+          <td>Growing budgets through strategic account ownership</td>
+          <td>Go-to-market &amp; commercial instinct</td>
+          <td>PMs need to understand how products create and capture value</td>
+        </tr>
+        <tr>
+          <td>5/5 CSAT across a diverse account portfolio</td>
+          <td>Customer empathy &amp; user research mindset</td>
+          <td>The best PMs obsess over users &mdash; I've been living that daily</td>
+        </tr>
+        <tr>
+          <td>Aligning clients, internal teams &amp; leadership</td>
+          <td>Cross-functional stakeholder management</td>
+          <td>PM success = influencing without authority across every team</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PM Work Samples -->
+  <section id="work-samples">
+    <h2>PM Work Samples</h2>
+    <p class="section-intro">The following artifacts were created independently to demonstrate core PM skills. Each was built from a real problem, not a template exercise.</p>
+
+    <div class="project-card">
+      <div class="header">
+        <span class="num">01</span>
+        <div>
+          <h3>AI Meeting Summarizer &mdash; Purpose &amp; Scope Document</h3>
+          <span class="category">Product Definition | Requirements | Scope Management</span>
+        </div>
+      </div>
+      <p class="desc">Defined the full purpose and scope for an AI agent that automatically processes meeting transcripts and generates structured summaries with action items, decisions, and owners. Built as if leading a real v1 scoping effort for a B2B SaaS team.</p>
+      <div class="skills-label">Skills demonstrated: <span style="font-weight:400; color: var(--color-muted);">Problem framing, user segmentation, in/out-of-scope definition, success metrics, v1 constraints</span></div>
+      <ul style="margin-top: 10px;">
+        <li>Identified 4 distinct user segments with differentiated needs and benefits</li>
+        <li>Defined explicit v1 in-scope capabilities and out-of-scope guardrails to prevent scope creep</li>
+        <li>Established 5 measurable success metrics with quantitative targets</li>
+        <li>Documented assumptions, constraints, and open questions for stakeholder alignment</li>
+      </ul>
+    </div>
+
+    <div class="project-card">
+      <div class="header">
+        <span class="num">02</span>
+        <div>
+          <h3>To-Do List Prioritization Tool &mdash; Product Design</h3>
+          <span class="category">Product Design | Feature Scoping | UX Logic</span>
+        </div>
+      </div>
+      <p class="desc">Designed the core logic and feature set for an AI-native task prioritization tool built inside Nimbalyst. Defined the scoring model, UX interactions, and AI integration layer from first principles &mdash; then drove it through to a full React + Tailwind CSS implementation.</p>
+      <div class="skills-label">Skills demonstrated: <span style="font-weight:400; color: var(--color-muted);">Weighted scoring systems, prioritization frameworks, user-adjustable controls, feature trade-offs</span></div>
+      <ul style="margin-top: 10px;">
+        <li>Designed a weighted scoring model across urgency, importance, and effort with High/Med/Low output labels</li>
+        <li>Defined user-adjustable factor weights via sliders with presets (e.g. Deep Work mode, Fire Drill mode)</li>
+        <li>Scoped task actions: edit, delete, complete, re-prioritize &mdash; with on-demand AI suggestion layer</li>
+        <li>Translated product decisions directly into implementation-ready prompt for an AI coding agent</li>
+      </ul>
+    </div>
+
+    <div class="project-card">
+      <div class="header">
+        <span class="num">03</span>
+        <div>
+          <h3>PRD Work Samples</h3>
+          <span class="category">Product Requirements | User Stories | Acceptance Criteria</span>
+        </div>
+      </div>
+      <p class="desc">A collection of Product Requirements Documents written to practice translating ambiguous problems into clear, buildable specs. Each PRD includes a problem statement, user stories, functional requirements, success metrics, and explicit out-of-scope items.</p>
+      <div class="skills-label">Skills demonstrated: <span style="font-weight:400; color: var(--color-muted);">Requirements writing, edge case identification, stakeholder alignment, out-of-scope documentation</span></div>
+      <ul style="margin-top: 10px;">
+        <li>Practiced writing requirements at varying levels of technical depth for different engineering audiences</li>
+        <li>Included explicit edge cases and failure states &mdash; not just happy path requirements</li>
+        <li>Structured each PRD for fast stakeholder review: TL;DR, context, requirements, and open questions</li>
+      </ul>
+    </div>
+
+    <div class="project-card">
+      <div class="header">
+        <span class="num">04</span>
+        <div>
+          <h3>Prioritization Frameworks &amp; Templates</h3>
+          <span class="category">Frameworks | Decision Tools | PM Methodology</span>
+        </div>
+      </div>
+      <p class="desc">Built and applied prioritization frameworks to make structured product decisions. These templates are designed for real use in B2B SaaS environments where engineering capacity is constrained and stakeholder opinions are loud.</p>
+      <div class="skills-label">Skills demonstrated: <span style="font-weight:400; color: var(--color-muted);">RICE scoring, MoSCoW, weighted prioritization, stakeholder alignment tools</span></div>
+      <ul style="margin-top: 10px;">
+        <li>Applied weighted scoring (urgency x importance x effort) to rank competing feature requests</li>
+        <li>Used MoSCoW to align stakeholders on what is and isn't committed for a given release</li>
+        <li>Built preset configurations for common PM contexts (e.g. growth sprint vs. debt reduction sprint)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- What I'm Looking For -->
+  <section id="contact">
+    <h2>What I'm Looking For</h2>
+    <div class="cta-box">
+      <p>
+        I'm seeking a PM role at a B2B SaaS company where I can apply my customer-side experience and commercial instincts to build products that users actually want &mdash; and that drive measurable business outcomes.
+      </p>
+      <p>
+        I bring something most junior PMs don't: I've managed real client relationships, navigated technical crises, grown accounts, and maintained trust across dozens of stakeholders simultaneously. That's not a background I have to translate into PM skills &mdash; it <em>is</em> PM skills.
+      </p>
+      <div class="cta-links">
+        <a href="mailto:nicolesurawski@gmail.com" class="primary">Email Me</a>
+        <a href="https://linkedin.com/in/nicole-surawski" class="secondary">LinkedIn</a>
+      </div>
+      <p class="cta-availability">Available for: Full-time B2B SaaS PM roles | Open to remote or hybrid</p>
+    </div>
+  </section>
+
+  <footer>
+    Portfolio compiled March 2026 &middot; Nicole Surawski &middot; Product Management
+  </footer>
+
+</body>
+</html>
