@@ -107,6 +107,14 @@
     .project-card .skills-label { font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; color: var(--color-text); }
     .project-card ul { padding-left: 18px; color: var(--color-muted); font-size: 0.88rem; }
     .project-card li { margin-bottom: 4px; }
+    .project-card .view-link {
+      display: inline-block; margin-top: 14px; padding: 8px 20px;
+      background: var(--color-accent); color: #fff; text-decoration: none;
+      border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .project-card .view-link:hover { opacity: 0.85; }
+    .project-card .view-link + .view-link { margin-left: 8px; }
 
     /* ── CTA / Contact ── */
     .cta-box {
@@ -272,6 +280,7 @@
         <li>Established 5 measurable success metrics with quantitative targets</li>
         <li>Documented assumptions, constraints, and open questions for stakeholder alignment</li>
       </ul>
+      <a href="prd-meeting-summarizer.html" class="view-link">View Full PRD &rarr;</a>
     </div>
 
     <div class="project-card">
@@ -290,6 +299,7 @@
         <li>Scoped task actions: edit, delete, complete, re-prioritize &mdash; with on-demand AI suggestion layer</li>
         <li>Translated product decisions directly into implementation-ready prompt for an AI coding agent</li>
       </ul>
+      <a href="prd-todo-prioritizer.html" class="view-link">View Full PRD &rarr;</a>
     </div>
 
     <div class="project-card">
@@ -307,6 +317,8 @@
         <li>Included explicit edge cases and failure states &mdash; not just happy path requirements</li>
         <li>Structured each PRD for fast stakeholder review: TL;DR, context, requirements, and open questions</li>
       </ul>
+      <a href="prd-meeting-summarizer.html" class="view-link">Meeting Summarizer PRD</a>
+      <a href="prd-todo-prioritizer.html" class="view-link">To-Do Prioritizer PRD</a>
     </div>
 
     <div class="project-card">

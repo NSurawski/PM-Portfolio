@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD: To-Do Prioritizer — Nicole Surawski</title>
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 820px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px 80px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .prd-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prd-label {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .prd-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .prd-header .subtitle {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      max-width: 640px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .meta-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .meta-item .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .meta-item .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-accent);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .section p, .section li {
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .section ul, .section ol {
+      padding-left: 22px;
+      margin-top: 8px;
+    }
+    .section li { margin-bottom: 6px; }
+
+    .callout {
+      background: var(--color-accent-light);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout strong { color: var(--color-accent); }
+
+    .callout-warn {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+    .callout-warn callout strong { color: #b45309; }
+
+    .prd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 12px 0;
+    }
+    .prd-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .prd-table th:first-child { border-radius: 8px 0 0 0; }
+    .prd-table th:last-child { border-radius: 0 8px 0 0; }
+    .prd-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .prd-table tr:last-child td { border-bottom: none; }
+    .prd-table tr:hover td { background: var(--color-accent-light); }
+
+    .tag {
+      display: inline-block;
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .tag-green { background: #ecfdf5; color: #059669; }
+    .tag-amber { background: #fffbeb; color: #b45309; }
+    .tag-red { background: #fef2f2; color: #dc2626; }
+
+    .formula-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: "SF Mono", "Fira Code", "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+    .formula-box .comment { color: #64748b; }
+    .formula-box .highlight { color: #818cf8; font-weight: 600; }
+
+    .prd-footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .prd-header h1 { font-size: 1.5rem; }
+      .page { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <div class="prd-header">
+    <span class="prd-label">Product Requirements Document</span>
+    <h1>To-Do Prioritizer</h1>
+    <p class="subtitle">A task prioritization tool that scores to-dos by urgency, importance, and effort &mdash; then auto-ranks them so users always know what to tackle first.</p>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Author</div>
+      <div class="value">Nicole Surawski</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Version</div>
+      <div class="value">v1.0</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Status</div>
+      <div class="value">Shipped (MVP)</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Target User</div>
+      <div class="value">Individual Contributors &amp; Managers</div>
+    </div>
+  </div>
+
+  <!-- TL;DR -->
+  <div class="section">
+    <h2>TL;DR</h2>
+    <p>Most to-do apps help you list tasks but not decide what to work on first. The To-Do Prioritizer introduces a weighted scoring model that evaluates every task across three dimensions &mdash; urgency, importance, and effort &mdash; and automatically categorizes them into High, Medium, and Low priority. Users can adjust the scoring weights to match their current work context (deep work, fire drill, quick wins), and the tool provides transparent reasoning for every ranking decision.</p>
+  </div>
+
+  <!-- Problem Statement -->
+  <div class="section">
+    <h2>Problem Statement</h2>
+    <p>People don't struggle with knowing <em>what</em> they need to do &mdash; they struggle with knowing <em>what to do first</em>. Existing to-do apps treat all tasks as equal, leaving users to constantly re-evaluate priorities in their heads. This leads to:</p>
+    <ul>
+      <li><strong>Decision fatigue</strong> &mdash; spending mental energy deciding what to work on instead of doing the work</li>
+      <li><strong>Urgency bias</strong> &mdash; defaulting to whatever feels most pressing, even when a high-impact task should take priority</li>
+      <li><strong>Effort avoidance</strong> &mdash; skipping important-but-hard tasks in favor of easy wins that don't move the needle</li>
+      <li><strong>No framework for changing contexts</strong> &mdash; what matters on a deadline day is different from a deep work day, but most tools don't adapt</li>
+    </ul>
+    <div class="callout">
+      <strong>The insight:</strong> Prioritization isn't subjective &mdash; it's a function of urgency, importance, and effort with context-dependent weights. Making this scoring model explicit and adjustable gives users a principled way to decide what to do next.
+    </div>
+  </div>
+
+  <!-- Target Users -->
+  <div class="section">
+    <h2>Target Users</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>User Segment</th>
+          <th>Pain Point</th>
+          <th>Primary Benefit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Individual Contributors</strong></td>
+          <td>Long to-do lists with no clear order; spend time deciding instead of doing</td>
+          <td>Instant ranked priorities with transparent reasoning</td>
+        </tr>
+        <tr>
+          <td><strong>Managers / Team Leads</strong></td>
+          <td>Need to balance team requests, deadlines, and strategic work across competing demands</td>
+          <td>Adjustable weight presets for different work contexts (sprint planning vs. fire drill)</td>
+        </tr>
+        <tr>
+          <td><strong>Students / Career Transitioners</strong></td>
+          <td>Juggling personal, professional, and learning tasks with no systematic approach</td>
+          <td>Low-friction tool that teaches prioritization thinking through scoring transparency</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- User Stories -->
+  <div class="section">
+    <h2>User Stories</h2>
+    <ol>
+      <li><strong>As a user with 20+ tasks</strong>, I want each task scored and ranked automatically so that I can stop spending mental energy deciding what to do next.</li>
+      <li><strong>As a user facing a deadline crunch</strong>, I want to switch to a "Deadline-driven" weight preset so that urgency-based tasks float to the top.</li>
+      <li><strong>As a user doing deep work</strong>, I want to switch to an "Impact-first" preset so that the highest-value tasks surface regardless of deadlines.</li>
+      <li><strong>As a user</strong>, I want to see <em>why</em> each task ranked where it did so that I can trust and learn from the prioritization.</li>
+      <li><strong>As a user</strong>, I want to break tasks into subtasks with their own progress tracking so that large projects feel manageable.</li>
+      <li><strong>As a user</strong>, I want to drag and manually reorder tasks when my judgment overrides the algorithm.</li>
+      <li><strong>As a user who completes all tasks</strong>, I want a celebration moment so that finishing feels rewarding.</li>
+    </ol>
+  </div>
+
+  <!-- Scoring Model -->
+  <div class="section">
+    <h2>Scoring Model</h2>
+    <p>The prioritization engine uses a weighted linear scoring model with three input dimensions:</p>
+
+    <div class="formula-box">
+      <span class="highlight">score</span> = (urgency &times; w<sub>1</sub>) + (importance &times; w<sub>2</sub>) + ((6 - effort) &times; w<sub>3</sub>)<br><br>
+      <span class="comment">// Urgency is derived from due date:</span><br>
+      Today or overdue &rarr; <span class="highlight">5</span> &nbsp;|&nbsp; Within 3 days &rarr; <span class="highlight">4</span> &nbsp;|&nbsp; Within 7 days &rarr; <span class="highlight">3</span> &nbsp;|&nbsp; Within 30 days &rarr; <span class="highlight">2</span> &nbsp;|&nbsp; No deadline &rarr; <span class="highlight">1</span><br><br>
+      <span class="comment">// Importance and Effort are user-rated 1&ndash;5</span><br>
+      <span class="comment">// Effort is inverted (6 - effort) so lower effort = higher score</span><br><br>
+      <span class="comment">// Priority labels:</span><br>
+      Score 3.5&ndash;5.0 = <span style="color: #ef4444;">HIGH</span> &nbsp;|&nbsp; 2.0&ndash;3.4 = <span style="color: #f59e0b;">MEDIUM</span> &nbsp;|&nbsp; 0.0&ndash;1.9 = <span style="color: #22c55e;">LOW</span>
+    </div>
+
+    <h3>Weight Presets</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Preset</th>
+          <th>Urgency</th>
+          <th>Importance</th>
+          <th>Effort</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Balanced</strong></td>
+          <td>40%</td>
+          <td>40%</td>
+          <td>20%</td>
+          <td>Default &mdash; general daily planning</td>
+        </tr>
+        <tr>
+          <td><strong>Deadline-driven</strong></td>
+          <td>60%</td>
+          <td>30%</td>
+          <td>10%</td>
+          <td>Sprint deadlines, end-of-quarter crunch</td>
+        </tr>
+        <tr>
+          <td><strong>Impact-first</strong></td>
+          <td>20%</td>
+          <td>70%</td>
+          <td>10%</td>
+          <td>Strategic deep work days, planning sessions</td>
+        </tr>
+        <tr>
+          <td><strong>Quick wins</strong></td>
+          <td>20%</td>
+          <td>30%</td>
+          <td>50%</td>
+          <td>Low-energy days, clearing the backlog</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Design decision:</strong> Weights are user-adjustable via sliders (range 10&ndash;80%) and always constrained to sum to 100%. When one slider moves, the other two adjust proportionally. This prevents invalid states while giving users full control.
+    </div>
+  </div>
+
+  <!-- Functional Requirements -->
+  <div class="section">
+    <h2>Functional Requirements</h2>
+
+    <h3>P0 &mdash; Must Have (v1)</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Acceptance Criteria</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-01</td>
+          <td>Add tasks via text input</td>
+          <td>User types a task name and presses Enter or clicks Add; task appears in "Unprioritized" section</td>
+        </tr>
+        <tr>
+          <td>FR-02</td>
+          <td>Score tasks across three dimensions</td>
+          <td>Scoring panel lets user set due date (calendar picker), importance (1&ndash;5 dot selector), and effort (1&ndash;5 dot selector); live score preview updates as inputs change</td>
+        </tr>
+        <tr>
+          <td>FR-03</td>
+          <td>Auto-categorize by priority</td>
+          <td>Scored tasks auto-sort into High (3.5&ndash;5.0), Medium (2.0&ndash;3.4), and Low (0.0&ndash;1.9) sections with color-coded badges</td>
+        </tr>
+        <tr>
+          <td>FR-04</td>
+          <td>Adjustable weight sliders</td>
+          <td>Three sliders for urgency, importance, and effort; always sum to 100%; moving one slider proportionally adjusts the others</td>
+        </tr>
+        <tr>
+          <td>FR-05</td>
+          <td>Weight presets</td>
+          <td>Four presets (Balanced, Deadline-driven, Impact-first, Quick wins) that instantly apply predefined weight configurations</td>
+        </tr>
+        <tr>
+          <td>FR-06</td>
+          <td>Priority reasoning</td>
+          <td>Each scored task displays a short explanation (e.g., "Due soon dominates priority" or "High impact + Quick win")</td>
+        </tr>
+        <tr>
+          <td>FR-07</td>
+          <td>Task completion</td>
+          <td>Checkbox marks task as complete; completed tasks move to a collapsible "Completed" section; tasks can be restored</td>
+        </tr>
+        <tr>
+          <td>FR-08</td>
+          <td>Task deletion with confirmation</td>
+          <td>Delete button shows inline confirmation ("Delete this task?") with Keep/Delete options to prevent accidental data loss</td>
+        </tr>
+        <tr>
+          <td>FR-09</td>
+          <td>Subtasks</td>
+          <td>Each task supports nested subtasks with their own completion tracking; subtask progress bar shows fraction completed</td>
+        </tr>
+        <tr>
+          <td>FR-10</td>
+          <td>Drag-and-drop reorder</td>
+          <td>Users can manually reorder tasks within or across sections by dragging</td>
+        </tr>
+        <tr>
+          <td>FR-11</td>
+          <td>Progress tracking</td>
+          <td>Global progress bar and counter (X/Y done) visible at all times</td>
+        </tr>
+        <tr>
+          <td>FR-12</td>
+          <td>Celebration on completion</td>
+          <td>Confetti animation and congratulatory overlay when all tasks are marked complete</td>
+        </tr>
+        <tr>
+          <td>FR-13</td>
+          <td>Data persistence</td>
+          <td>All tasks, weights, and preset selection persist to localStorage and survive page refreshes</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>P1 &mdash; Should Have (v2)</h3>
+    <ul>
+      <li>AI-powered task suggestions ("Based on your list, consider breaking X into subtasks")</li>
+      <li>Recurring tasks with configurable frequency (daily, weekly, monthly)</li>
+      <li>Due date notifications / browser reminders</li>
+      <li>Tags and filtering (e.g., "Work", "Personal", "Health")</li>
+      <li>Keyboard shortcuts for power users (J/K to navigate, X to complete, P to prioritize)</li>
+    </ul>
+
+    <h3>P2 &mdash; Nice to Have (Future)</h3>
+    <ul>
+      <li>Calendar view showing tasks plotted against deadlines</li>
+      <li>Team mode &mdash; shared task boards with role-based weights</li>
+      <li>Analytics dashboard (completion rate trends, priority distribution over time)</li>
+      <li>Integration with calendar apps for auto-generated urgency from scheduled deadlines</li>
+      <li>Natural language task input ("Call dentist by Friday, high importance")</li>
+    </ul>
+  </div>
+
+  <!-- UX Design Decisions -->
+  <div class="section">
+    <h2>Key UX Design Decisions</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Decision</th>
+          <th>Rationale</th>
+          <th>Alternative Considered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dot selectors (1&ndash;5) instead of dropdowns for importance/effort</td>
+          <td>Faster interaction, visual weight makes the rating feel tangible, works well on mobile</td>
+          <td>Numeric dropdowns &mdash; rejected as slower and less engaging</td>
+        </tr>
+        <tr>
+          <td>Live score preview in the scoring panel</td>
+          <td>Users see the impact of their inputs before saving, building trust in the scoring model</td>
+          <td>Score only shown after save &mdash; rejected because it makes the model feel like a black box</td>
+        </tr>
+        <tr>
+          <td>Inline delete confirmation instead of modal</td>
+          <td>Less disruptive flow; user stays in context rather than losing focus to a modal dialog</td>
+          <td>Browser confirm() dialog &mdash; rejected as jarring and non-brandable</td>
+        </tr>
+        <tr>
+          <td>Weight sliders always sum to 100%</td>
+          <td>Prevents invalid weight states; intuitive "give more to X, take from Y" mental model</td>
+          <td>Independent sliders normalized at calculation time &mdash; rejected as confusing UX</td>
+        </tr>
+        <tr>
+          <td>Confetti celebration on completion</td>
+          <td>Emotional payoff that reinforces the habit loop; makes the tool feel human and rewarding</td>
+          <td>Simple checkmark animation &mdash; rejected as forgettable</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Non-Functional Requirements -->
+  <div class="section">
+    <h2>Non-Functional Requirements</h2>
+    <ul>
+      <li><strong>Performance:</strong> All scoring calculations run client-side with zero network latency; UI updates within 16ms (60fps animations)</li>
+      <li><strong>Data privacy:</strong> All data stays in the browser via localStorage; no server, no tracking, no analytics</li>
+      <li><strong>Accessibility:</strong> Keyboard-navigable; color-coded priorities also use text labels (not color alone); sufficient contrast ratios</li>
+      <li><strong>Responsive:</strong> Fully functional on mobile viewports; touch-friendly interaction targets (&ge;44px)</li>
+      <li><strong>Zero build step:</strong> Runs via CDN-loaded React and Tailwind &mdash; open the HTML file and it works</li>
+    </ul>
+  </div>
+
+  <!-- Out of Scope -->
+  <div class="section">
+    <h2>Out of Scope (v1)</h2>
+    <div class="callout callout-warn">
+      <strong>Explicitly excluded</strong> to ship a focused MVP:
+    </div>
+    <ul>
+      <li>User accounts or authentication &mdash; the tool is single-user and sessionless</li>
+      <li>Backend server or database &mdash; all data lives in localStorage</li>
+      <li>AI-generated prioritization suggestions &mdash; v1 uses a deterministic scoring model</li>
+      <li>Collaboration features &mdash; no shared lists or team views</li>
+      <li>Import/export (CSV, JSON) &mdash; data lives in the browser only</li>
+      <li>Calendar or notification integrations</li>
+    </ul>
+  </div>
+
+  <!-- Success Metrics -->
+  <div class="section">
+    <h2>Success Metrics</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Target</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>% of tasks that get scored (not left in "Unprioritized")</td>
+          <td>&ge; 75%</td>
+          <td>If users aren't scoring tasks, the core value prop isn't landing</td>
+        </tr>
+        <tr>
+          <td>Task completion rate</td>
+          <td>&ge; 60%</td>
+          <td>The tool should drive follow-through, not just list-making</td>
+        </tr>
+        <tr>
+          <td>Preset usage (users try at least 2 presets)</td>
+          <td>&ge; 40%</td>
+          <td>Validates that context-aware weighting is a real user need, not a feature for its own sake</td>
+        </tr>
+        <tr>
+          <td>Return usage (3+ sessions)</td>
+          <td>&ge; 50%</td>
+          <td>Indicates the tool earns a place in the user's workflow</td>
+        </tr>
+        <tr>
+          <td>Subtask adoption rate</td>
+          <td>&ge; 30%</td>
+          <td>Validates that users need task decomposition, informing v2 scope</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Technical Architecture -->
+  <div class="section">
+    <h2>Technical Architecture (v1)</h2>
+    <ul>
+      <li><strong>Frontend:</strong> React 18 (CDN) + Tailwind CSS (CDN) + Babel (in-browser transpilation)</li>
+      <li><strong>State management:</strong> React useState + useCallback with localStorage sync</li>
+      <li><strong>Scoring engine:</strong> Pure client-side calculation &mdash; deterministic, no API calls</li>
+      <li><strong>Persistence:</strong> localStorage with JSON serialization for tasks, weights, and active preset</li>
+      <li><strong>Drag-and-drop:</strong> Native HTML5 drag events (no library dependency)</li>
+      <li><strong>Hosting:</strong> Static file &mdash; works from local filesystem or any static host</li>
+    </ul>
+    <div class="callout">
+      <strong>Architecture decision:</strong> CDN-loaded React with in-browser Babel was chosen for v1 to eliminate all build tooling. This trades a small performance cost (Babel compilation on load) for maximum deployment simplicity. A production version would move to Vite with proper bundling.
+    </div>
+  </div>
+
+  <!-- Assumptions & Risks -->
+  <div class="section">
+    <h2>Assumptions &amp; Risks</h2>
+
+    <h3>Assumptions</h3>
+    <ul>
+      <li>Users want a lightweight tool, not a full project management platform</li>
+      <li>A three-factor scoring model (urgency, importance, effort) captures enough signal for personal task prioritization</li>
+      <li>Users will invest 10&ndash;15 seconds per task to score it if the payoff is clear and immediate</li>
+      <li>localStorage is sufficient for single-user, single-device persistence in v1</li>
+    </ul>
+
+    <h3>Risks</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Likelihood</th>
+          <th>Impact</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Scoring friction causes users to skip prioritization</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-red">High</span></td>
+          <td>Live preview makes scoring feel fast and transparent; dot selectors minimize input time to ~5 seconds per task</td>
+        </tr>
+        <tr>
+          <td>Three factors are too simplistic for complex work</td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td>Drag-and-drop override lets users manually adjust when the algorithm doesn't match their judgment</td>
+        </tr>
+        <tr>
+          <td>localStorage data loss (browser clear, device switch)</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td>v2 adds cloud sync or export/import; v1 accepts this as a known limitation</td>
+        </tr>
+        <tr>
+          <td>Users don't discover weight presets</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td>Weights panel shows current configuration inline; presets are prominently displayed when panel is open</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Open Questions -->
+  <div class="section">
+    <h2>Open Questions</h2>
+    <ol>
+      <li>Should v2 allow users to create custom presets, or are the four built-in presets sufficient for most use cases?</li>
+      <li>Is there demand for a "focus mode" that shows only the top 3 tasks and hides everything else?</li>
+      <li>Should completed tasks be auto-archived after a configurable time period, or kept indefinitely?</li>
+      <li>Would users benefit from a weekly email digest showing their completion rate and priority distribution?</li>
+      <li>Is there a market for team-shared priority boards where a manager sets the weight configuration for the whole team?</li>
+    </ol>
+  </div>
+
+  <div class="prd-footer">
+    PRD by Nicole Surawski &middot; March 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
+  </div>
+
+</div>
+
+</body>
+</html>
