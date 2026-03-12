@@ -115,6 +115,14 @@
     }
     .project-card .view-link:hover { opacity: 0.85; }
     .project-card .view-link + .view-link { margin-left: 8px; }
+    .project-card .demo-link {
+      display: inline-block; margin-top: 14px; margin-left: 8px; padding: 8px 20px;
+      background: transparent; color: var(--color-accent); text-decoration: none;
+      border: 1.5px solid var(--color-accent); border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+    .project-card .demo-link:hover { background: var(--color-accent); color: #fff; }
+    .project-card .view-link + .demo-link { margin-left: 8px; }
 
     /* ── CTA / Contact ── */
     .cta-box {
@@ -300,6 +308,7 @@
         <li>Translated product decisions directly into implementation-ready prompt for an AI coding agent</li>
       </ul>
       <a href="prd-todo-prioritizer.html" class="view-link">View Full PRD &rarr;</a>
+      <a href="todo-prioritizer.html" class="demo-link" target="_blank">Try Live Demo &rarr;</a>
     </div>
 
     <div class="project-card">
