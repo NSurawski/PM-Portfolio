@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD: PM Toolkit — Nicole Surawski</title>
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 820px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px 80px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .prd-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prd-label {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .prd-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .prd-header .subtitle {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      max-width: 640px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .meta-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .meta-item .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .meta-item .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-accent);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .section p, .section li {
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .section ul, .section ol {
+      padding-left: 22px;
+      margin-top: 8px;
+    }
+    .section li { margin-bottom: 6px; }
+
+    .callout {
+      background: var(--color-accent-light);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout strong { color: var(--color-accent); }
+
+    .callout-warn {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+    .callout-warn strong { color: #b45309; }
+
+    .prd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 12px 0;
+    }
+    .prd-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .prd-table th:first-child { border-radius: 8px 0 0 0; }
+    .prd-table th:last-child { border-radius: 0 8px 0 0; }
+    .prd-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .prd-table tr:last-child td { border-bottom: none; }
+    .prd-table tr:hover td { background: var(--color-accent-light); }
+
+    .tag {
+      display: inline-block;
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .tag-green { background: #ecfdf5; color: #059669; }
+    .tag-amber { background: #fffbeb; color: #b45309; }
+    .tag-red { background: #fef2f2; color: #dc2626; }
+
+    .prd-footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .prd-header h1 { font-size: 1.5rem; }
+      .page { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <div class="prd-header">
+    <span class="prd-label">Product Requirements Document</span>
+    <h1>PM Toolkit</h1>
+    <p class="subtitle">A free, open-access library of 18 product management templates with search, category filtering, in-app preview, and instant download &mdash; no signup required.</p>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Author</div>
+      <div class="value">Nicole Surawski</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Version</div>
+      <div class="value">v1.0</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Status</div>
+      <div class="value">Shipped (MVP)</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Target User</div>
+      <div class="value">Product Managers (all levels)</div>
+    </div>
+  </div>
+
+  <!-- TL;DR -->
+  <div class="section">
+    <h2>TL;DR</h2>
+    <p>Product managers spend too much time creating documents from scratch or hunting for templates that are either too generic, locked behind paywalls, or require account creation. PM Toolkit is a single-page app that gives PMs instant access to 18 structured templates across 6 core PM disciplines &mdash; from PRDs and roadmaps to sprint retrospectives and go-to-market plans. Every template includes guided prompts and example content, and can be previewed in-app, downloaded as Markdown, or exported as PDF in one click.</p>
+  </div>
+
+  <!-- Problem Statement -->
+  <div class="section">
+    <h2>Problem Statement</h2>
+    <p>Product managers create the same document types repeatedly &mdash; PRDs, sprint plans, stakeholder briefs, research plans &mdash; but there's no single, free, well-structured starting point. The current landscape forces PMs to:</p>
+    <ul>
+      <li><strong>Start from scratch every time</strong> &mdash; wasting 20-30 minutes on structure and formatting instead of content</li>
+      <li><strong>Use inconsistent formats</strong> &mdash; every PM on a team structures documents differently, making reviews slower and alignment harder</li>
+      <li><strong>Hit paywalls or signup walls</strong> &mdash; most template libraries require email signups, paid subscriptions, or are locked inside specific tools (Notion, Confluence, etc.)</li>
+      <li><strong>Get templates that are too generic</strong> &mdash; blank headers with no guidance on what actually belongs in each section</li>
+    </ul>
+    <div class="callout">
+      <strong>The insight:</strong> PMs don't need another template marketplace &mdash; they need a simple, instantly accessible toolkit with opinionated templates that teach best practices through their structure. The templates themselves should be the documentation.
+    </div>
+  </div>
+
+  <!-- Target Users -->
+  <div class="section">
+    <h2>Target Users</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>User Segment</th>
+          <th>Pain Point</th>
+          <th>Primary Benefit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Junior / Aspiring PMs</strong></td>
+          <td>Don't know what a good PRD, sprint plan, or research plan looks like</td>
+          <td>Structured templates with guided prompts that teach PM documentation standards</td>
+        </tr>
+        <tr>
+          <td><strong>Mid-Level PMs</strong></td>
+          <td>Waste time recreating the same document structures; formats vary across the team</td>
+          <td>Consistent, ready-to-use templates they can adopt team-wide for faster output</td>
+        </tr>
+        <tr>
+          <td><strong>Freelance / Solo PMs</strong></td>
+          <td>No established team templates; need professional-grade docs for client work</td>
+          <td>Complete toolkit they can customize per engagement without rebuilding from scratch</td>
+        </tr>
+        <tr>
+          <td><strong>Career Transitioners</strong></td>
+          <td>Need to demonstrate PM knowledge and document fluency in portfolios or interviews</td>
+          <td>Real templates that show the breadth of PM deliverables and how to structure them</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- User Stories -->
+  <div class="section">
+    <h2>User Stories</h2>
+    <ol>
+      <li><strong>As a PM starting a new feature</strong>, I want to grab a PRD template with pre-defined sections so that I spend my time on product thinking, not document formatting.</li>
+      <li><strong>As a PM preparing for sprint planning</strong>, I want a sprint planning template with capacity tracking and goal-setting sections so that I don't forget key inputs.</li>
+      <li><strong>As someone new to PM</strong>, I want to browse all template categories so that I can learn what types of documents PMs are expected to produce.</li>
+      <li><strong>As a PM</strong>, I want to search templates by keyword so that I can find the right one in seconds, not minutes.</li>
+      <li><strong>As a PM</strong>, I want to preview a template before downloading so that I can confirm it fits my use case without cluttering my downloads folder.</li>
+      <li><strong>As a PM who works in Markdown</strong>, I want to download templates as .md files so I can paste them directly into my team's wiki or docs tool.</li>
+      <li><strong>As a PM presenting to stakeholders</strong>, I want to export a clean PDF so I can share polished documents without additional formatting.</li>
+    </ol>
+  </div>
+
+  <!-- Template Library -->
+  <div class="section">
+    <h2>Template Library</h2>
+    <p>18 templates organized across 6 PM disciplines:</p>
+
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Templates</th>
+          <th>Use Cases</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Strategy &amp; Planning</strong></td>
+          <td>PRD, Product Roadmap, Competitive Analysis, OKR Template</td>
+          <td>Feature scoping, quarterly planning, market positioning</td>
+        </tr>
+        <tr>
+          <td><strong>Feature Development</strong></td>
+          <td>Feature Spec, User Story Map, Technical Brief</td>
+          <td>Eng handoff, requirements detail, technical scoping</td>
+        </tr>
+        <tr>
+          <td><strong>Agile &amp; Sprints</strong></td>
+          <td>Sprint Planning, Sprint Retrospective, Backlog Prioritization (RICE + MoSCoW)</td>
+          <td>Sprint ceremonies, prioritization, continuous improvement</td>
+        </tr>
+        <tr>
+          <td><strong>Research &amp; Discovery</strong></td>
+          <td>User Research Plan, Interview Guide, Survey Template</td>
+          <td>User interviews, quantitative research, discovery sprints</td>
+        </tr>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>Stakeholder Brief, Meeting Notes, Status Update</td>
+          <td>Executive updates, cross-functional alignment, meeting output</td>
+        </tr>
+        <tr>
+          <td><strong>Launch &amp; Operations</strong></td>
+          <td>Launch Checklist, Go-to-Market Plan, Post-Mortem / Incident Review</td>
+          <td>Product launches, GTM strategy, incident response</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Design decision:</strong> Each template includes guided prompts (e.g., "What problem are we solving? Who is affected? What is the impact?") and example table structures rather than just blank headers. This makes templates usable by both experienced PMs and those learning the craft.
+    </div>
+  </div>
+
+  <!-- Functional Requirements -->
+  <div class="section">
+    <h2>Functional Requirements</h2>
+
+    <h3>P0 &mdash; Must Have (v1)</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Acceptance Criteria</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-01</td>
+          <td>Template library with 18 templates across 6 categories</td>
+          <td>All templates render as cards in a responsive grid; each card shows title, category badge, and description</td>
+        </tr>
+        <tr>
+          <td>FR-02</td>
+          <td>Category navigation</td>
+          <td>Color-coded category filter buttons with icons; clicking a category shows only matching templates; clicking again shows all; "All Templates" button resets filter</td>
+        </tr>
+        <tr>
+          <td>FR-03</td>
+          <td>Search</td>
+          <td>Real-time text search filters templates by title, description, and category name; results update as the user types; shows count of matching templates</td>
+        </tr>
+        <tr>
+          <td>FR-04</td>
+          <td>Template preview</td>
+          <td>Modal overlay renders the full Markdown template as styled HTML; includes header with category icon and title; scrollable body; close on backdrop click or X button</td>
+        </tr>
+        <tr>
+          <td>FR-05</td>
+          <td>Download as Markdown (.md)</td>
+          <td>One-click generates and downloads the raw Markdown file named <code>[template-id].md</code></td>
+        </tr>
+        <tr>
+          <td>FR-06</td>
+          <td>Download as PDF</td>
+          <td>Opens the rendered Markdown in a new window with print-optimized styles and triggers the browser print dialog for PDF save</td>
+        </tr>
+        <tr>
+          <td>FR-07</td>
+          <td>Responsive layout</td>
+          <td>Grid adapts from 3 columns (desktop) to 2 (tablet) to 1 (mobile); all interactions work on touch devices</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>P1 &mdash; Should Have (v2)</h3>
+    <ul>
+      <li>Favorites / bookmarks &mdash; save frequently used templates to a "My Templates" section (persisted to localStorage)</li>
+      <li>Copy to clipboard &mdash; one-click copy of the raw Markdown for pasting into Notion, Confluence, or GitHub</li>
+      <li>Template customization &mdash; in-app editor to modify a template before downloading</li>
+      <li>Recently used &mdash; track which templates the user has downloaded and surface them at the top</li>
+      <li>Dark mode toggle</li>
+    </ul>
+
+    <h3>P2 &mdash; Nice to Have (Future)</h3>
+    <ul>
+      <li>Community-submitted templates with upvoting</li>
+      <li>Team template packs &mdash; curated bundles for specific team sizes or PM methodologies</li>
+      <li>Template versioning &mdash; track updates to templates over time</li>
+      <li>Integration with Notion, Google Docs, or Confluence for direct export</li>
+      <li>AI-powered template fill &mdash; use a language model to auto-populate sections based on a brief description</li>
+    </ul>
+  </div>
+
+  <!-- Key UX Design Decisions -->
+  <div class="section">
+    <h2>Key UX Design Decisions</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Decision</th>
+          <th>Rationale</th>
+          <th>Alternative Considered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Color-coded categories with icons</td>
+          <td>Visual scanning is faster than reading labels; consistent color associations build muscle memory for repeat users</td>
+          <td>Plain text category tabs &mdash; rejected as less scannable and less engaging</td>
+        </tr>
+        <tr>
+          <td>Preview modal instead of separate page</td>
+          <td>Users can browse, preview, and return to the grid without losing scroll position or context</td>
+          <td>Navigate to a full template page &mdash; rejected as disruptive to browsing flow</td>
+        </tr>
+        <tr>
+          <td>PDF via browser print dialog</td>
+          <td>Zero server-side dependency; works offline; user controls paper size and margins</td>
+          <td>Server-generated PDF &mdash; rejected to maintain zero-backend architecture</td>
+        </tr>
+        <tr>
+          <td>Guided prompts in templates (not blank headers)</td>
+          <td>Reduces "blank page anxiety"; teaches PM documentation norms through structure; usable as learning material</td>
+          <td>Minimal blank templates &mdash; rejected as too generic and not differentiated from competitors</td>
+        </tr>
+        <tr>
+          <td>No signup, no paywall, no tracking</td>
+          <td>Removes all friction; aligns with the portfolio goal of demonstrating generosity and PM knowledge; builds trust</td>
+          <td>Email gate for downloads &mdash; rejected as antithetical to the product's purpose</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Non-Functional Requirements -->
+  <div class="section">
+    <h2>Non-Functional Requirements</h2>
+    <ul>
+      <li><strong>Performance:</strong> All templates embedded in the HTML; search and filtering is instant with no network requests</li>
+      <li><strong>Data privacy:</strong> No user data collected; no analytics; no cookies; no server</li>
+      <li><strong>Accessibility:</strong> Keyboard-navigable; modal traps focus appropriately; sufficient color contrast on all category badges</li>
+      <li><strong>Responsive:</strong> Fully functional on mobile, tablet, and desktop; touch-friendly targets</li>
+      <li><strong>Zero build step:</strong> Single HTML file with CDN-loaded React, Tailwind, and Marked.js &mdash; open the file and it works</li>
+      <li><strong>Offline capable:</strong> After initial load, all features work without network (templates are embedded, not fetched)</li>
+    </ul>
+  </div>
+
+  <!-- Out of Scope -->
+  <div class="section">
+    <h2>Out of Scope (v1)</h2>
+    <div class="callout callout-warn">
+      <strong>Explicitly excluded</strong> to ship a focused MVP:
+    </div>
+    <ul>
+      <li>User accounts, authentication, or saved state &mdash; the tool is stateless</li>
+      <li>In-app template editing or customization</li>
+      <li>Community-contributed templates or user submissions</li>
+      <li>Backend server or database</li>
+      <li>Analytics or usage tracking of any kind</li>
+      <li>Integration with external tools (Notion, Confluence, Jira, etc.)</li>
+      <li>Template versioning or changelogs</li>
+    </ul>
+  </div>
+
+  <!-- Success Metrics -->
+  <div class="section">
+    <h2>Success Metrics</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Target</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Templates previewed per session</td>
+          <td>&ge; 3</td>
+          <td>Indicates users are exploring the library, not just landing and leaving</td>
+        </tr>
+        <tr>
+          <td>Download rate (% of previews that lead to download)</td>
+          <td>&ge; 50%</td>
+          <td>If users preview but don't download, the templates aren't meeting expectations</td>
+        </tr>
+        <tr>
+          <td>Category filter usage</td>
+          <td>&ge; 40% of sessions</td>
+          <td>Validates that the category taxonomy matches how PMs think about their work</td>
+        </tr>
+        <tr>
+          <td>Search usage</td>
+          <td>&ge; 30% of sessions</td>
+          <td>Indicates users know what they need and the library is large enough to warrant search</td>
+        </tr>
+        <tr>
+          <td>Return visits (2+ sessions)</td>
+          <td>&ge; 35%</td>
+          <td>The toolkit earns a bookmark &mdash; users come back when they need another template</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Technical Architecture -->
+  <div class="section">
+    <h2>Technical Architecture (v1)</h2>
+    <ul>
+      <li><strong>Frontend:</strong> React 18 (CDN) + Tailwind CSS (CDN) + Babel (in-browser transpilation)</li>
+      <li><strong>Markdown rendering:</strong> Marked.js for preview modal and PDF export</li>
+      <li><strong>Template storage:</strong> All 18 templates embedded as JavaScript objects with raw Markdown strings</li>
+      <li><strong>Search:</strong> Client-side string matching across title, description, and category &mdash; no indexing needed at this scale</li>
+      <li><strong>Download (.md):</strong> Blob URL created in-browser, triggered as file download</li>
+      <li><strong>Download (.pdf):</strong> New window with rendered HTML + print-optimized CSS + auto-triggered print dialog</li>
+      <li><strong>Hosting:</strong> Static file &mdash; works from local filesystem or any static host</li>
+    </ul>
+    <div class="callout">
+      <strong>Architecture decision:</strong> Embedding all templates as JavaScript objects (rather than fetching from files or an API) was chosen to ensure the entire toolkit works offline after initial load and to keep the zero-backend constraint. At 18 templates the total file size remains reasonable (~100KB).
+    </div>
+  </div>
+
+  <!-- Assumptions & Risks -->
+  <div class="section">
+    <h2>Assumptions &amp; Risks</h2>
+
+    <h3>Assumptions</h3>
+    <ul>
+      <li>PMs across experience levels need structured starting points for their documents</li>
+      <li>Markdown is a widely-accepted format that's importable into most PM tools (Notion, GitHub, Confluence, etc.)</li>
+      <li>18 templates covers the core PM workflow; niche templates (e.g., pricing models, A/B test plans) can wait for v2</li>
+      <li>Guided prompts inside templates are more valuable than blank headers for the target audience</li>
+    </ul>
+
+    <h3>Risks</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Likelihood</th>
+          <th>Impact</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Templates are too generic for experienced PMs</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td>Guided prompts add depth beyond basic headers; v2 adds customization and team-specific packs</td>
+        </tr>
+        <tr>
+          <td>Users prefer integrated templates inside their existing tools (Notion, Confluence)</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td>Markdown export is tool-agnostic and importable into most platforms; v2 adds direct integrations</td>
+        </tr>
+        <tr>
+          <td>Single HTML file becomes unwieldy as template count grows</td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td>At 18 templates the file is ~100KB; beyond ~50 templates, migrate to lazy-loaded JSON or a backend</td>
+        </tr>
+        <tr>
+          <td>PDF export quality varies across browsers</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td>Print-optimized CSS handles most browsers; v2 could use a dedicated PDF library for consistent output</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Open Questions -->
+  <div class="section">
+    <h2>Open Questions</h2>
+    <ol>
+      <li>Should v2 allow users to submit their own templates? If so, what's the curation/quality bar?</li>
+      <li>Is there demand for "filled example" versions of each template (a completed PRD as reference, not just a blank one)?</li>
+      <li>Would team-specific template packs (e.g., "Startup PM Pack", "Enterprise PM Pack") drive more adoption?</li>
+      <li>Should the toolkit integrate with AI to auto-fill templates based on a brief product description?</li>
+      <li>Is there value in tracking which templates are most/least downloaded to inform v2 content priorities?</li>
+    </ol>
+  </div>
+
+  <div class="prd-footer">
+    PRD by Nicole Surawski &middot; March 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
+  </div>
+
+</div>
+
+</body>
+</html>

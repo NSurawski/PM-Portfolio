@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PM Toolkit — Templates & Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .modal-enter { animation: modalIn 0.25s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .fade-in { animation: fadeIn 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .prose h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+    .prose h2 { font-size: 1.15rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3rem; }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.4rem; color: #475569; }
+    .prose p { margin-bottom: 0.6rem; color: #475569; line-height: 1.6; font-size: 0.875rem; }
+    .prose ul, .prose ol { margin-bottom: 0.6rem; padding-left: 1.5rem; color: #475569; font-size: 0.875rem; }
+    .prose li { margin-bottom: 0.25rem; line-height: 1.5; }
+    .prose table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
+    .prose th, .prose td { border: 1px solid #e2e8f0; padding: 0.5rem; text-align: left; }
+    .prose th { background: #f8fafc; font-weight: 600; color: #334155; }
+    .prose blockquote { border-left: 3px solid #cbd5e1; padding-left: 1rem; color: #64748b; font-style: italic; margin: 0.75rem 0; }
+    .prose code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.8rem; }
+    .prose hr { border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
+    ::selection { background: #dbeafe; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen antialiased">
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo, useCallback } = React;
+
+    // ============================
+    // CATEGORIES
+    // ============================
+    const CATEGORIES = {
+      strategy: { label: "Strategy & Planning", color: "blue", icon: "M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" },
+      feature: { label: "Feature Development", color: "violet", icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" },
+      agile: { label: "Agile & Sprints", color: "emerald", icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" },
+      research: { label: "Research & Discovery", color: "amber", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
+      communication: { label: "Communication", color: "rose", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
+      launch: { label: "Launch & Operations", color: "teal", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+    };
+
+    const CAT_STYLES = {
+      blue:    { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200",    badge: "bg-blue-100 text-blue-700",    iconBg: "bg-blue-100",    iconText: "text-blue-600",    ring: "ring-blue-200" },
+      violet:  { bg: "bg-violet-50",  text: "text-violet-700",  border: "border-violet-200",  badge: "bg-violet-100 text-violet-700",  iconBg: "bg-violet-100",  iconText: "text-violet-600",  ring: "ring-violet-200" },
+      emerald: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", badge: "bg-emerald-100 text-emerald-700", iconBg: "bg-emerald-100", iconText: "text-emerald-600", ring: "ring-emerald-200" },
+      amber:   { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-amber-200",   badge: "bg-amber-100 text-amber-700",   iconBg: "bg-amber-100",   iconText: "text-amber-600",   ring: "ring-amber-200" },
+      rose:    { bg: "bg-rose-50",    text: "text-rose-700",    border: "border-rose-200",    badge: "bg-rose-100 text-rose-700",    iconBg: "bg-rose-100",    iconText: "text-rose-600",    ring: "ring-rose-200" },
+      teal:    { bg: "bg-teal-50",    text: "text-teal-700",    border: "border-teal-200",    badge: "bg-teal-100 text-teal-700",    iconBg: "bg-teal-100",    iconText: "text-teal-600",    ring: "ring-teal-200" },
+    };
+
+    // ============================
+    // TEMPLATES
+    // ============================
+    const TEMPLATES = [
+      // --- STRATEGY & PLANNING ---
+      {
+        id: "prd", title: "Product Requirements Document", category: "strategy",
+        description: "Define product goals, user needs, scope, and success metrics for a new feature or product.",
+        markdown: `# Product Requirements Document (PRD)
+
+## 1. Overview
+**Product Name:** [Product/Feature Name]
+**Author:** [Your Name]
+**Date:** [Date]
+**Version:** 1.0
+**Status:** Draft | In Review | Approved
+
+## 2. Problem Statement
+> What problem are we solving? Who is affected? What is the impact?
+
+[Describe the problem clearly and concisely]
+
+## 3. Goals & Objectives
+| Goal | Metric | Target |
+|------|--------|--------|
+| [Primary goal] | [How you'll measure] | [Target value] |
+| [Secondary goal] | [How you'll measure] | [Target value] |
+
+## 4. User Personas
+**Primary Persona:** [Name / Role]
+- Pain points: [List key frustrations]
+- Needs: [What they need from this solution]
+- Current workflow: [How they solve this today]
+
+## 5. Requirements
+
+### 5.1 Functional Requirements
+| ID | Requirement | Priority | Notes |
+|----|------------|----------|-------|
+| FR-1 | [Requirement description] | Must Have | |
+| FR-2 | [Requirement description] | Should Have | |
+| FR-3 | [Requirement description] | Nice to Have | |
+
+### 5.2 Non-Functional Requirements
+- **Performance:** [Response time, throughput targets]
+- **Security:** [Auth, data protection needs]
+- **Scalability:** [Expected load, growth]
+- **Accessibility:** [WCAG level, requirements]
+
+## 6. User Stories
+- As a [persona], I want to [action] so that [benefit]
+- As a [persona], I want to [action] so that [benefit]
+- As a [persona], I want to [action] so that [benefit]
+
+## 7. Scope
+
+### In Scope
+- [Feature/capability 1]
+- [Feature/capability 2]
+
+### Out of Scope
+- [Explicitly excluded item 1]
+- [Explicitly excluded item 2]
+
+## 8. Success Metrics
+| Metric | Baseline | Target | Timeline |
+|--------|----------|--------|----------|
+| [Metric name] | [Current] | [Goal] | [By when] |
+
+## 9. Timeline & Milestones
+| Milestone | Date | Owner |
+|-----------|------|-------|
+| Design complete | [Date] | [Name] |
+| Dev complete | [Date] | [Name] |
+| QA complete | [Date] | [Name] |
+| Launch | [Date] | [Name] |
+
+## 10. Open Questions
+- [ ] [Question 1]
+- [ ] [Question 2]
+
+## 11. Appendix
+[Links to mockups, research, competitive analysis, etc.]`
+      },
+      {
+        id: "roadmap", title: "Product Roadmap", category: "strategy",
+        description: "Plan and communicate product direction across quarters with themes and milestones.",
+        markdown: `# Product Roadmap
+
+**Product:** [Product Name]
+**Owner:** [PM Name]
+**Last Updated:** [Date]
+**Planning Horizon:** [e.g., 4 quarters]
+
+---
+
+## Vision Statement
+> [One sentence describing where the product is headed]
+
+## Strategic Themes
+1. **[Theme 1]** — [Brief description of this strategic area]
+2. **[Theme 2]** — [Brief description]
+3. **[Theme 3]** — [Brief description]
+
+---
+
+## Q1 — [Quarter Label]
+**Theme:** [Primary theme]
+
+| Initiative | Goal | Status | Owner |
+|-----------|------|--------|-------|
+| [Feature/project] | [What success looks like] | Planning / In Progress / Done | [Name] |
+| [Feature/project] | [What success looks like] | Planning / In Progress / Done | [Name] |
+
+**Key Milestones:**
+- [ ] [Milestone 1] — [Date]
+- [ ] [Milestone 2] — [Date]
+
+---
+
+## Q2 — [Quarter Label]
+**Theme:** [Primary theme]
+
+| Initiative | Goal | Status | Owner |
+|-----------|------|--------|-------|
+| [Feature/project] | [What success looks like] | Not Started | [Name] |
+| [Feature/project] | [What success looks like] | Not Started | [Name] |
+
+---
+
+## Q3 — [Quarter Label]
+**Theme:** [Primary theme]
+
+| Initiative | Goal | Status | Owner |
+|-----------|------|--------|-------|
+| [Feature/project] | [What success looks like] | Not Started | [Name] |
+
+---
+
+## Q4 — [Quarter Label]
+**Theme:** [Primary theme]
+
+| Initiative | Goal | Status | Owner |
+|-----------|------|--------|-------|
+| [Feature/project] | [What success looks like] | Not Started | [Name] |
+
+---
+
+## Dependencies & Risks
+| Risk/Dependency | Impact | Mitigation | Owner |
+|----------------|--------|------------|-------|
+| [Description] | High/Med/Low | [Plan] | [Name] |
+
+## Change Log
+| Date | Change | Author |
+|------|--------|--------|
+| [Date] | Initial roadmap created | [Name] |`
+      },
+      {
+        id: "competitive-analysis", title: "Competitive Analysis", category: "strategy",
+        description: "Evaluate competitors across features, pricing, positioning, and market strengths.",
+        markdown: `# Competitive Analysis
+
+**Product:** [Your Product]
+**Analyst:** [Your Name]
+**Date:** [Date]
+
+---
+
+## Market Overview
+> [Brief description of the market landscape, trends, and total addressable market]
+
+## Competitors
+
+### Competitor 1: [Name]
+- **Website:** [URL]
+- **Founded:** [Year]
+- **Funding/Revenue:** [If known]
+- **Target Audience:** [Who they serve]
+- **Positioning:** [How they position themselves]
+
+### Competitor 2: [Name]
+- **Website:** [URL]
+- **Founded:** [Year]
+- **Target Audience:** [Who they serve]
+- **Positioning:** [How they position themselves]
+
+### Competitor 3: [Name]
+- **Website:** [URL]
+- **Founded:** [Year]
+- **Target Audience:** [Who they serve]
+- **Positioning:** [How they position themselves]
+
+---
+
+## Feature Comparison
+| Feature | Us | Comp 1 | Comp 2 | Comp 3 |
+|---------|:--:|:------:|:------:|:------:|
+| [Feature 1] | Y/N | Y/N | Y/N | Y/N |
+| [Feature 2] | Y/N | Y/N | Y/N | Y/N |
+| [Feature 3] | Y/N | Y/N | Y/N | Y/N |
+| [Feature 4] | Y/N | Y/N | Y/N | Y/N |
+| [Feature 5] | Y/N | Y/N | Y/N | Y/N |
+
+## Pricing Comparison
+| Plan | Us | Comp 1 | Comp 2 | Comp 3 |
+|------|:--:|:------:|:------:|:------:|
+| Free/Starter | [Price] | [Price] | [Price] | [Price] |
+| Pro/Growth | [Price] | [Price] | [Price] | [Price] |
+| Enterprise | [Price] | [Price] | [Price] | [Price] |
+
+## SWOT Summary
+
+### Our Strengths
+- [Strength 1]
+- [Strength 2]
+
+### Our Weaknesses
+- [Weakness 1]
+- [Weakness 2]
+
+### Opportunities
+- [Opportunity 1]
+- [Opportunity 2]
+
+### Threats
+- [Threat 1]
+- [Threat 2]
+
+## Key Takeaways
+1. [Insight 1]
+2. [Insight 2]
+3. [Insight 3]
+
+## Recommended Actions
+- [ ] [Action item 1]
+- [ ] [Action item 2]`
+      },
+      {
+        id: "okrs", title: "OKR Template", category: "strategy",
+        description: "Set and track objectives and key results for your team or product.",
+        markdown: `# OKRs — [Team/Product Name]
+
+**Period:** [Q1 2025 / H1 2025]
+**Owner:** [Name]
+**Last Updated:** [Date]
+
+---
+
+## Objective 1: [Bold, Inspirational Goal]
+> [Why this matters — one sentence of context]
+
+| Key Result | Baseline | Target | Current | Status |
+|-----------|----------|--------|---------|--------|
+| [Measurable outcome 1] | [Start] | [Goal] | [Now] | On Track / At Risk / Off Track |
+| [Measurable outcome 2] | [Start] | [Goal] | [Now] | On Track / At Risk / Off Track |
+| [Measurable outcome 3] | [Start] | [Goal] | [Now] | On Track / At Risk / Off Track |
+
+**Initiatives:**
+- [Project/task that drives these KRs]
+- [Project/task that drives these KRs]
+
+---
+
+## Objective 2: [Bold, Inspirational Goal]
+> [Why this matters]
+
+| Key Result | Baseline | Target | Current | Status |
+|-----------|----------|--------|---------|--------|
+| [Measurable outcome 1] | [Start] | [Goal] | [Now] | |
+| [Measurable outcome 2] | [Start] | [Goal] | [Now] | |
+| [Measurable outcome 3] | [Start] | [Goal] | [Now] | |
+
+**Initiatives:**
+- [Project/task]
+- [Project/task]
+
+---
+
+## Objective 3: [Bold, Inspirational Goal]
+> [Why this matters]
+
+| Key Result | Baseline | Target | Current | Status |
+|-----------|----------|--------|---------|--------|
+| [Measurable outcome 1] | [Start] | [Goal] | [Now] | |
+| [Measurable outcome 2] | [Start] | [Goal] | [Now] | |
+
+---
+
+## Scoring Guide
+- **1.0** = Fully achieved
+- **0.7** = Strong progress, nearly there
+- **0.4** = Some progress, significant gaps
+- **0.0** = No meaningful progress
+
+## End-of-Period Review
+| Objective | Score | Reflection |
+|-----------|-------|------------|
+| Objective 1 | [0.0–1.0] | [What went well / what didn't] |
+| Objective 2 | [0.0–1.0] | [What went well / what didn't] |
+| Objective 3 | [0.0–1.0] | [What went well / what didn't] |`
+      },
+
+      // --- FEATURE DEVELOPMENT ---
+      {
+        id: "feature-spec", title: "Feature Spec", category: "feature",
+        description: "Detail a specific feature's behavior, edge cases, and acceptance criteria.",
+        markdown: `# Feature Spec: [Feature Name]
+
+**Author:** [Name]
+**Date:** [Date]
+**Status:** Draft | In Review | Approved
+**Epic/PRD:** [Link to parent PRD]
+
+---
+
+## Summary
+> [One paragraph: What is this feature and why are we building it?]
+
+## User Story
+As a **[persona]**, I want to **[action]** so that **[benefit]**.
+
+## Detailed Requirements
+
+### Happy Path
+1. User [does action]
+2. System [responds with]
+3. User sees [result]
+
+### Edge Cases
+| Scenario | Expected Behavior |
+|----------|------------------|
+| [Edge case 1] | [What should happen] |
+| [Edge case 2] | [What should happen] |
+| [Empty state] | [What should display] |
+| [Error state] | [What should display] |
+
+### Business Rules
+- [Rule 1: e.g., "Users can only create 5 items on the free plan"]
+- [Rule 2]
+- [Rule 3]
+
+## Acceptance Criteria
+- [ ] [Given X, when Y, then Z]
+- [ ] [Given X, when Y, then Z]
+- [ ] [Given X, when Y, then Z]
+- [ ] [Performance: loads in under X seconds]
+- [ ] [Accessibility: meets WCAG AA]
+
+## Design
+- [Link to Figma/mockups]
+- [Link to prototype]
+
+## Technical Notes
+- [API endpoints needed]
+- [Database changes]
+- [Third-party dependencies]
+- [Migration considerations]
+
+## Analytics & Tracking
+| Event | Trigger | Properties |
+|-------|---------|------------|
+| [event_name] | [When it fires] | [Key data points] |
+
+## Open Questions
+- [ ] [Question 1]
+- [ ] [Question 2]`
+      },
+      {
+        id: "user-story-map", title: "User Story Map", category: "feature",
+        description: "Map user activities, tasks, and stories to prioritize what to build first.",
+        markdown: `# User Story Map: [Feature/Product]
+
+**Author:** [Name]
+**Date:** [Date]
+
+---
+
+## User Goal
+> [The overarching thing the user is trying to accomplish]
+
+## Persona
+**[Persona Name]** — [Brief description of who they are and what they care about]
+
+---
+
+## Activity Map
+
+### Activity 1: [High-level user activity]
+
+| Step | User Task | MVP Story | V2 Story | Future |
+|------|----------|-----------|----------|--------|
+| 1 | [Task name] | [Smallest usable version] | [Enhancement] | [Nice to have] |
+| 2 | [Task name] | [Smallest usable version] | [Enhancement] | [Nice to have] |
+| 3 | [Task name] | [Smallest usable version] | [Enhancement] | |
+
+### Activity 2: [High-level user activity]
+
+| Step | User Task | MVP Story | V2 Story | Future |
+|------|----------|-----------|----------|--------|
+| 1 | [Task name] | [Story] | [Story] | [Story] |
+| 2 | [Task name] | [Story] | [Story] | |
+| 3 | [Task name] | [Story] | | |
+
+### Activity 3: [High-level user activity]
+
+| Step | User Task | MVP Story | V2 Story | Future |
+|------|----------|-----------|----------|--------|
+| 1 | [Task name] | [Story] | [Story] | |
+| 2 | [Task name] | [Story] | | |
+
+---
+
+## Release Slices
+
+### Release 1 — MVP
+**Goal:** [What this release proves or enables]
+- [Story from Activity 1, Step 1]
+- [Story from Activity 2, Step 1]
+- [Story from Activity 3, Step 1]
+
+### Release 2 — Enhancement
+**Goal:** [What additional value this adds]
+- [Story list]
+
+### Release 3 — Full Vision
+**Goal:** [Complete experience]
+- [Story list]
+
+## Notes & Assumptions
+- [Assumption 1]
+- [Assumption 2]`
+      },
+      {
+        id: "technical-brief", title: "Technical Brief", category: "feature",
+        description: "Communicate technical approach, architecture decisions, and tradeoffs to engineering.",
+        markdown: `# Technical Brief: [Feature/Project Name]
+
+**Author:** [Name]
+**Date:** [Date]
+**Status:** Proposed | Accepted | Superseded
+
+---
+
+## Context
+> [Why are we making this technical decision? What business problem does it solve?]
+
+## Proposed Approach
+> [High-level description of the technical solution]
+
+## Architecture
+
+### System Design
+\`\`\`
+[Describe or diagram the system architecture]
+Client -> API Gateway -> Service -> Database
+\`\`\`
+
+### Key Components
+| Component | Responsibility | Technology |
+|-----------|---------------|------------|
+| [Component 1] | [What it does] | [Tech stack] |
+| [Component 2] | [What it does] | [Tech stack] |
+
+### Data Model
+| Entity | Fields | Notes |
+|--------|--------|-------|
+| [Entity 1] | [Key fields] | [Relationships, constraints] |
+| [Entity 2] | [Key fields] | [Relationships, constraints] |
+
+## Alternatives Considered
+| Approach | Pros | Cons | Why Rejected |
+|----------|------|------|-------------|
+| [Option A] | [Benefits] | [Drawbacks] | [Reason] |
+| [Option B] | [Benefits] | [Drawbacks] | [Reason] |
+
+## Tradeoffs & Risks
+- **Tradeoff 1:** [What we're giving up vs. gaining]
+- **Risk 1:** [What could go wrong] — Mitigation: [Plan]
+- **Risk 2:** [What could go wrong] — Mitigation: [Plan]
+
+## Implementation Plan
+| Phase | Work | Estimate | Owner |
+|-------|------|----------|-------|
+| Phase 1 | [Description] | [Time] | [Name] |
+| Phase 2 | [Description] | [Time] | [Name] |
+
+## Success Criteria
+- [ ] [Technical metric 1]
+- [ ] [Technical metric 2]
+- [ ] [Performance benchmark]`
+      },
+
+      // --- AGILE & SPRINTS ---
+      {
+        id: "sprint-planning", title: "Sprint Planning", category: "agile",
+        description: "Structure your sprint planning sessions with goals, capacity, and committed items.",
+        markdown: `# Sprint Planning: Sprint [Number]
+
+**Sprint Dates:** [Start] — [End]
+**Team:** [Team Name]
+**Scrum Master:** [Name]
+**Sprint Goal:** [One clear sentence]
+
+---
+
+## Team Capacity
+| Team Member | Available Days | Notes |
+|------------|---------------|-------|
+| [Name] | [X] / [Total] | [PTO, meetings, etc.] |
+| [Name] | [X] / [Total] | |
+| [Name] | [X] / [Total] | |
+
+**Total Capacity:** [X] story points / [Y] available days
+
+## Sprint Backlog
+
+### Committed Items
+| ID | Story/Task | Points | Assignee | Acceptance Criteria |
+|----|-----------|--------|----------|-------------------|
+| [JIRA-123] | [Description] | [Pts] | [Name] | [Brief criteria] |
+| [JIRA-124] | [Description] | [Pts] | [Name] | [Brief criteria] |
+| [JIRA-125] | [Description] | [Pts] | [Name] | [Brief criteria] |
+
+**Total Committed:** [X] points
+
+### Stretch Goals
+| ID | Story/Task | Points | Notes |
+|----|-----------|--------|-------|
+| [JIRA-126] | [Description] | [Pts] | [Only if capacity allows] |
+
+## Carryover from Last Sprint
+| ID | Story/Task | Remaining Work | Reason |
+|----|-----------|---------------|--------|
+| [JIRA-120] | [Description] | [What's left] | [Why it carried] |
+
+## Dependencies & Blockers
+- [ ] [Dependency/blocker 1] — Owner: [Name]
+- [ ] [Dependency/blocker 2] — Owner: [Name]
+
+## Definition of Done Reminder
+- [ ] Code reviewed and merged
+- [ ] Tests passing
+- [ ] Documentation updated
+- [ ] QA verified
+- [ ] Product accepted`
+      },
+      {
+        id: "retrospective", title: "Sprint Retrospective", category: "agile",
+        description: "Run productive retros to identify what worked, what didn't, and action items.",
+        markdown: `# Sprint Retrospective: Sprint [Number]
+
+**Date:** [Date]
+**Facilitator:** [Name]
+**Attendees:** [Names]
+
+---
+
+## Sprint Summary
+- **Goal:** [What we set out to do]
+- **Outcome:** Met / Partially Met / Missed
+- **Velocity:** [X] points committed, [Y] completed
+
+---
+
+## What Went Well
+- [Positive 1]
+- [Positive 2]
+- [Positive 3]
+
+## What Didn't Go Well
+- [Challenge 1]
+- [Challenge 2]
+- [Challenge 3]
+
+## What Surprised Us
+- [Surprise 1]
+- [Surprise 2]
+
+---
+
+## Discussion Topics
+### Topic 1: [Name]
+- **Context:** [What happened]
+- **Impact:** [How it affected the team/sprint]
+- **Root Cause:** [Why it happened]
+
+### Topic 2: [Name]
+- **Context:** [What happened]
+- **Impact:** [How it affected the team/sprint]
+- **Root Cause:** [Why it happened]
+
+---
+
+## Action Items
+| Action | Owner | Due Date | Status |
+|--------|-------|----------|--------|
+| [Specific improvement] | [Name] | [Date] | To Do |
+| [Specific improvement] | [Name] | [Date] | To Do |
+| [Specific improvement] | [Name] | [Date] | To Do |
+
+## Follow-up from Last Retro
+| Action | Owner | Status | Notes |
+|--------|-------|--------|-------|
+| [Previous action] | [Name] | Done / In Progress / Not Started | |
+
+---
+
+## Team Health Check (1-5)
+| Area | Score | Trend |
+|------|:-----:|:-----:|
+| Collaboration | [1-5] | Up/Down/Flat |
+| Code Quality | [1-5] | Up/Down/Flat |
+| Velocity | [1-5] | Up/Down/Flat |
+| Morale | [1-5] | Up/Down/Flat |`
+      },
+      {
+        id: "backlog-prioritization", title: "Backlog Prioritization", category: "agile",
+        description: "Score and rank backlog items using RICE, MoSCoW, or value/effort frameworks.",
+        markdown: `# Backlog Prioritization
+
+**Product:** [Product Name]
+**Date:** [Date]
+**Method:** RICE / MoSCoW / Value vs. Effort
+
+---
+
+## RICE Scoring
+
+| Item | Reach | Impact | Confidence | Effort | RICE Score | Priority |
+|------|:-----:|:------:|:----------:|:------:|:----------:|:--------:|
+| [Feature 1] | [#users/qtr] | [0.25-3] | [50-100%] | [person-weeks] | [Score] | [Rank] |
+| [Feature 2] | | | | | | |
+| [Feature 3] | | | | | | |
+| [Feature 4] | | | | | | |
+| [Feature 5] | | | | | | |
+
+> **RICE Score** = (Reach x Impact x Confidence) / Effort
+
+### Impact Scale
+- 3 = Massive impact
+- 2 = High impact
+- 1 = Medium impact
+- 0.5 = Low impact
+- 0.25 = Minimal impact
+
+---
+
+## MoSCoW Classification
+
+### Must Have (Critical for this release)
+- [ ] [Item 1]
+- [ ] [Item 2]
+
+### Should Have (Important, not critical)
+- [ ] [Item 1]
+- [ ] [Item 2]
+
+### Could Have (Nice to have)
+- [ ] [Item 1]
+- [ ] [Item 2]
+
+### Won't Have (Explicitly deferred)
+- [ ] [Item 1] — Reason: [Why deferred]
+- [ ] [Item 2] — Reason: [Why deferred]
+
+---
+
+## Value vs. Effort Matrix
+
+|  | Low Effort | High Effort |
+|--|-----------|-------------|
+| **High Value** | QUICK WINS: [Items] | BIG BETS: [Items] |
+| **Low Value** | FILL-INS: [Items] | AVOID: [Items] |
+
+## Final Prioritized List
+| Rank | Item | Category | Sprint/Release |
+|:----:|------|----------|---------------|
+| 1 | [Item] | Must Have | Sprint [X] |
+| 2 | [Item] | Must Have | Sprint [X] |
+| 3 | [Item] | Should Have | Sprint [X+1] |`
+      },
+
+      // --- RESEARCH & DISCOVERY ---
+      {
+        id: "user-research-plan", title: "User Research Plan", category: "research",
+        description: "Plan and structure user research studies with clear goals and methodology.",
+        markdown: `# User Research Plan
+
+**Study Name:** [Name]
+**Researcher:** [Name]
+**Date:** [Date]
+**Status:** Planning | Recruiting | In Progress | Analysis | Complete
+
+---
+
+## Research Objectives
+1. [Primary question you're trying to answer]
+2. [Secondary question]
+3. [Secondary question]
+
+## Background & Context
+> [Why are we doing this research? What decisions will it inform?]
+
+## Methodology
+- **Type:** [Usability test / Interview / Survey / Diary study / A/B test]
+- **Approach:** [Moderated / Unmoderated / Remote / In-person]
+- **Duration:** [Per session and total timeline]
+
+## Participants
+- **Target:** [X] participants
+- **Persona:** [Who we want to talk to]
+- **Screening Criteria:**
+  - [Criteria 1: e.g., "Uses product at least 3x/week"]
+  - [Criteria 2: e.g., "In role for 1+ years"]
+- **Recruitment Method:** [Internal panel / UserTesting / Social / etc.]
+
+## Discussion Guide / Tasks
+
+### Warm-up (5 min)
+- Tell me about your role and how you [relevant activity]
+- How do you currently [problem area]?
+
+### Core Tasks/Questions (30 min)
+1. [Task/Question 1]
+   - Follow-up: [Probe deeper]
+2. [Task/Question 2]
+   - Follow-up: [Probe deeper]
+3. [Task/Question 3]
+
+### Wrap-up (5 min)
+- What was the most confusing part?
+- What would you change?
+- Anything else you'd like to share?
+
+## Success Metrics
+| Metric | Target |
+|--------|--------|
+| Task completion rate | [X%] |
+| Time on task | [< X min] |
+| Satisfaction score | [X/5] |
+| Error rate | [< X%] |
+
+## Timeline
+| Phase | Dates | Owner |
+|-------|-------|-------|
+| Plan & recruit | [Dates] | [Name] |
+| Conduct sessions | [Dates] | [Name] |
+| Analysis & synthesis | [Dates] | [Name] |
+| Readout & recommendations | [Date] | [Name] |
+
+## Deliverables
+- [ ] Research findings report
+- [ ] Key insights summary (1-pager)
+- [ ] Video highlight reel
+- [ ] Recommendations for product team`
+      },
+      {
+        id: "interview-guide", title: "Interview Guide", category: "research",
+        description: "Structure user interviews with warm-up questions, core topics, and probes.",
+        markdown: `# User Interview Guide
+
+**Study:** [Study Name]
+**Interviewer:** [Name]
+**Date:** [Date]
+**Participant:** [Name / ID]
+
+---
+
+## Before the Interview
+- [ ] Test recording equipment
+- [ ] Have consent form ready
+- [ ] Open prototype/product if needed
+- [ ] Have note-taking doc ready
+
+## Introduction Script
+> "Hi [Name], thanks for taking the time to speak with me today. I'm [Your Name] from [Company]. We're working on [brief context] and want to learn about your experience with [topic]. There are no right or wrong answers — we're here to learn from you. This session will take about [X] minutes. Is it okay if I record this for note-taking purposes?"
+
+---
+
+## Section 1: Background (5 min)
+- Tell me about your role. What does a typical day look like?
+- How long have you been doing [relevant activity]?
+- What tools do you currently use for [activity]?
+
+## Section 2: Current Behavior (10 min)
+- Walk me through the last time you [relevant task].
+  - *Probe: What was the hardest part?*
+  - *Probe: How long did it take?*
+- What frustrates you most about [current process]?
+- Have you tried any workarounds? What do they look like?
+
+## Section 3: Needs & Goals (10 min)
+- If you had a magic wand, what would you change about [process]?
+- What would make you feel successful when doing [task]?
+- How would you know if a solution was working for you?
+  - *Probe: What metrics or feelings would indicate success?*
+
+## Section 4: Concept/Prototype Feedback (10 min)
+> [Show concept/prototype if applicable]
+
+- What are your first impressions?
+- What would you expect to happen if you [action]?
+- Is there anything confusing or missing?
+- How does this compare to what you use today?
+  - *Probe: Better, worse, or different? In what ways?*
+
+## Section 5: Wrap-up (5 min)
+- Of everything we discussed, what's the single biggest pain point?
+- Is there anything I didn't ask about that you think is important?
+- Would you be open to a follow-up conversation?
+
+---
+
+## Post-Interview Notes
+**Key Quotes:**
+- "[Quote 1]"
+- "[Quote 2]"
+
+**Top Insights:**
+1. [Insight]
+2. [Insight]
+3. [Insight]
+
+**Surprises:**
+- [Anything unexpected]
+
+**Follow-up Needed:**
+- [ ] [Action item]`
+      },
+      {
+        id: "survey-template", title: "Survey Template", category: "research",
+        description: "Design effective product surveys with question types and analysis frameworks.",
+        markdown: `# Product Survey: [Survey Name]
+
+**Purpose:** [What decisions will this data inform?]
+**Owner:** [Name]
+**Target Responses:** [Number]
+**Distribution:** [Email / In-app / Social / etc.]
+**Open:** [Start Date] — **Close:** [End Date]
+
+---
+
+## Screener Questions
+1. What is your role? (Multiple Choice)
+   - Product Manager
+   - Designer
+   - Engineer
+   - Marketing
+   - Other: ___
+
+2. How often do you use [Product]? (Single Select)
+   - Daily
+   - Several times a week
+   - Weekly
+   - Monthly
+   - Rarely / Never
+
+---
+
+## Core Questions
+
+### Satisfaction (Likert Scale: 1-5)
+3. How satisfied are you with [Product/Feature] overall?
+
+4. Rate the following aspects:
+   | Aspect | Very Dissatisfied (1) | ... | Very Satisfied (5) |
+   |--------|:----:|:---:|:---:|
+   | Ease of use | | | |
+   | Reliability | | | |
+   | Feature set | | | |
+   | Speed/Performance | | | |
+   | Design/UI | | | |
+
+### Feature Priorities (Ranking)
+5. Rank these potential features by importance to you:
+   - [ ] [Feature A]
+   - [ ] [Feature B]
+   - [ ] [Feature C]
+   - [ ] [Feature D]
+
+### NPS
+6. How likely are you to recommend [Product] to a colleague? (0-10)
+7. What's the primary reason for your score? (Open text)
+
+### Open-Ended
+8. What is the biggest challenge you face with [problem area]? (Open text)
+9. If you could change one thing about [Product], what would it be? (Open text)
+10. Is there anything else you'd like to share? (Open text)
+
+---
+
+## Analysis Plan
+| Question | Analysis Method | Expected Insight |
+|----------|----------------|-----------------|
+| Q3-4 | Mean scores, distribution | Satisfaction baseline |
+| Q5 | Ranking frequency | Feature priority |
+| Q6-7 | NPS calculation + thematic coding | Loyalty drivers |
+| Q8-10 | Thematic analysis | Pain points & opportunities |
+
+## Results Summary
+| Metric | Result | Benchmark |
+|--------|--------|-----------|
+| Response rate | [X%] | [Industry avg] |
+| NPS Score | [Score] | [Previous / industry] |
+| Overall satisfaction | [X/5] | [Previous] |
+| Top requested feature | [Feature] | — |`
+      },
+
+      // --- COMMUNICATION ---
+      {
+        id: "stakeholder-brief", title: "Stakeholder Brief", category: "communication",
+        description: "Communicate product updates, decisions, and asks to leadership concisely.",
+        markdown: `# Stakeholder Brief: [Topic]
+
+**From:** [Your Name], [Role]
+**To:** [Audience]
+**Date:** [Date]
+**Read Time:** ~3 minutes
+
+---
+
+## TL;DR
+> [2-3 sentence summary. What do they need to know? What do you need from them?]
+
+## Context
+[Brief background — assume they have limited context. 2-3 sentences max.]
+
+## Current Status
+**Overall:** On Track / At Risk / Off Track
+
+| Area | Status | Notes |
+|------|:------:|-------|
+| Development | Green/Yellow/Red | [Brief note] |
+| Design | Green/Yellow/Red | [Brief note] |
+| Go-to-market | Green/Yellow/Red | [Brief note] |
+
+## Key Updates
+1. **[Update 1]** — [One sentence on what happened and why it matters]
+2. **[Update 2]** — [One sentence]
+3. **[Update 3]** — [One sentence]
+
+## Metrics / Progress
+| Metric | Last Period | This Period | Target |
+|--------|:----------:|:----------:|:------:|
+| [Metric 1] | [Value] | [Value] | [Goal] |
+| [Metric 2] | [Value] | [Value] | [Goal] |
+
+## Risks & Blockers
+| Risk | Impact | Mitigation | Need |
+|------|--------|------------|------|
+| [Risk 1] | [High/Med/Low] | [Your plan] | [What you need] |
+| [Risk 2] | [High/Med/Low] | [Your plan] | [What you need] |
+
+## Decisions Needed
+- [ ] **[Decision 1]:** [Options and your recommendation]
+- [ ] **[Decision 2]:** [Options and your recommendation]
+
+## Next Steps
+| Action | Owner | By When |
+|--------|-------|---------|
+| [Action 1] | [Name] | [Date] |
+| [Action 2] | [Name] | [Date] |
+
+---
+*Questions? Reach out to [Your Name] at [contact]*`
+      },
+      {
+        id: "meeting-notes", title: "Meeting Notes", category: "communication",
+        description: "Capture decisions, action items, and key discussion points from meetings.",
+        markdown: `# Meeting Notes: [Meeting Title]
+
+**Date:** [Date]
+**Time:** [Start] — [End]
+**Location:** [Room / Video link]
+**Facilitator:** [Name]
+
+## Attendees
+- [Name] — [Role]
+- [Name] — [Role]
+- [Name] — [Role]
+
+**Absent:** [Names]
+
+---
+
+## Agenda
+1. [Topic 1] — [Owner] (X min)
+2. [Topic 2] — [Owner] (X min)
+3. [Topic 3] — [Owner] (X min)
+
+---
+
+## Discussion Notes
+
+### Topic 1: [Title]
+- [Key point discussed]
+- [Key point discussed]
+- **Decision:** [What was decided]
+- **Open Question:** [What still needs resolution]
+
+### Topic 2: [Title]
+- [Key point discussed]
+- [Key point discussed]
+- **Decision:** [What was decided]
+
+### Topic 3: [Title]
+- [Key point discussed]
+- **Decision:** [What was decided]
+
+---
+
+## Decisions Made
+| # | Decision | Owner | Date |
+|---|----------|-------|------|
+| 1 | [Decision description] | [Name] | [Today] |
+| 2 | [Decision description] | [Name] | [Today] |
+
+## Action Items
+| # | Action | Owner | Due Date | Status |
+|---|--------|-------|----------|--------|
+| 1 | [Specific task] | [Name] | [Date] | To Do |
+| 2 | [Specific task] | [Name] | [Date] | To Do |
+| 3 | [Specific task] | [Name] | [Date] | To Do |
+
+## Parking Lot
+- [Topic deferred for future discussion]
+- [Topic deferred for future discussion]
+
+## Next Meeting
+**Date:** [Date] | **Time:** [Time] | **Agenda:** [Brief preview]`
+      },
+      {
+        id: "status-update", title: "Status Update", category: "communication",
+        description: "Send clear weekly or bi-weekly status updates to your team and stakeholders.",
+        markdown: `# Status Update: [Project/Product Name]
+
+**Period:** [Week of Date] or [Date Range]
+**Author:** [Name]
+**Overall Status:** On Track / At Risk / Off Track
+
+---
+
+## Highlights This Period
+- [Accomplishment 1]
+- [Accomplishment 2]
+- [Accomplishment 3]
+
+## Progress vs. Plan
+| Milestone | Target Date | Status | Notes |
+|-----------|:----------:|:------:|-------|
+| [Milestone 1] | [Date] | Done / On Track / Delayed | [Note] |
+| [Milestone 2] | [Date] | Done / On Track / Delayed | [Note] |
+| [Milestone 3] | [Date] | Done / On Track / Delayed | [Note] |
+
+## Key Metrics
+| Metric | Last Week | This Week | Trend |
+|--------|:---------:|:---------:|:-----:|
+| [Metric 1] | [Value] | [Value] | Up/Down/Flat |
+| [Metric 2] | [Value] | [Value] | Up/Down/Flat |
+
+## Blockers & Risks
+| Issue | Impact | Owner | Need |
+|-------|--------|-------|------|
+| [Blocker 1] | [Impact] | [Name] | [What's needed to unblock] |
+
+## Focus for Next Period
+- [Priority 1]
+- [Priority 2]
+- [Priority 3]
+
+## Help Needed
+- [Request 1 — from whom]
+- [Request 2 — from whom]`
+      },
+
+      // --- LAUNCH & OPERATIONS ---
+      {
+        id: "launch-checklist", title: "Launch Checklist", category: "launch",
+        description: "Comprehensive pre-launch, launch day, and post-launch checklist for releases.",
+        markdown: `# Launch Checklist: [Feature/Product Name]
+
+**Launch Date:** [Date]
+**PM:** [Name]
+**Tech Lead:** [Name]
+**Status:** Pre-Launch / Launch Day / Post-Launch
+
+---
+
+## Pre-Launch (T-2 weeks)
+
+### Product
+- [ ] Feature complete and QA'd
+- [ ] Edge cases tested
+- [ ] Performance benchmarks met
+- [ ] Accessibility audit passed
+- [ ] Feature flags configured
+- [ ] Rollback plan documented
+
+### Design
+- [ ] Final UI reviewed and approved
+- [ ] Empty/error/loading states designed
+- [ ] Mobile responsive verified
+- [ ] Screenshots captured for marketing
+
+### Engineering
+- [ ] Code reviewed and merged
+- [ ] Database migrations tested
+- [ ] Monitoring & alerts configured
+- [ ] Load testing completed
+- [ ] API documentation updated
+
+### Go-to-Market
+- [ ] Release notes written
+- [ ] Help center / docs updated
+- [ ] Email/notification copy approved
+- [ ] Blog post drafted (if applicable)
+- [ ] Social media posts scheduled (if applicable)
+
+### Internal
+- [ ] Sales team briefed
+- [ ] Support team trained
+- [ ] Internal announcement drafted
+- [ ] FAQ document prepared
+
+---
+
+## Launch Day (T-0)
+
+### Morning
+- [ ] Final go/no-go decision made
+- [ ] Feature flag enabled (% rollout: ____)
+- [ ] Monitoring dashboards open
+- [ ] War room / Slack channel active
+
+### Rollout
+- [ ] [X%] rollout — check metrics (30 min)
+- [ ] [X%] rollout — check metrics (1 hr)
+- [ ] [100%] rollout — full launch
+- [ ] External comms sent (email, blog, social)
+- [ ] Internal announcement posted
+
+### Monitoring
+- [ ] Error rates normal
+- [ ] Performance within targets
+- [ ] No critical support tickets
+- [ ] Key metrics trending as expected
+
+---
+
+## Post-Launch (T+1 week)
+
+- [ ] Day 1 metrics reviewed
+- [ ] Day 3 metrics reviewed
+- [ ] Week 1 metrics reviewed
+- [ ] User feedback collected and triaged
+- [ ] Bugs triaged and prioritized
+- [ ] Retrospective scheduled
+- [ ] Success criteria evaluated
+- [ ] Stakeholder readout delivered`
+      },
+      {
+        id: "gtm-plan", title: "Go-to-Market Plan", category: "launch",
+        description: "Plan your product launch strategy including positioning, channels, and timeline.",
+        markdown: `# Go-to-Market Plan: [Product/Feature]
+
+**Author:** [Name]
+**Launch Date:** [Date]
+**Version:** 1.0
+
+---
+
+## Executive Summary
+> [2-3 sentences: What we're launching, for whom, and expected impact]
+
+## Product Overview
+- **What:** [Brief product/feature description]
+- **Why:** [Problem it solves]
+- **For Whom:** [Target audience]
+- **Differentiator:** [Why us vs. alternatives]
+
+## Target Audience
+
+### Primary Segment
+- **Who:** [Description]
+- **Size:** [TAM/SAM estimate]
+- **Pain Points:** [Top 2-3]
+- **Where They Are:** [Channels to reach them]
+
+### Secondary Segment
+- **Who:** [Description]
+- **Pain Points:** [Top 2-3]
+
+## Positioning & Messaging
+
+### Positioning Statement
+For [target audience] who [need/problem], [Product] is a [category] that [key benefit]. Unlike [competitors], we [differentiator].
+
+### Key Messages
+| Audience | Message | Proof Point |
+|----------|---------|-------------|
+| [Segment 1] | [Core message] | [Data/testimonial] |
+| [Segment 2] | [Core message] | [Data/testimonial] |
+
+## Channel Strategy
+| Channel | Tactic | Owner | Timeline | Budget |
+|---------|--------|-------|----------|--------|
+| Email | Launch announcement | [Name] | T-1 day | $0 |
+| Blog | Feature deep-dive post | [Name] | T-0 | $0 |
+| Social | Twitter/LinkedIn campaign | [Name] | T-0 to T+7 | [Budget] |
+| In-app | Feature announcement banner | [Name] | T-0 | $0 |
+| PR | Press outreach | [Name] | T-7 | [Budget] |
+| Paid | [Google/Meta ads] | [Name] | T+0 to T+30 | [Budget] |
+
+## Success Metrics
+| Metric | Target | Timeline | Owner |
+|--------|--------|----------|-------|
+| Signups / Activations | [Target] | First 30 days | [Name] |
+| Feature adoption rate | [Target %] | First 30 days | [Name] |
+| Revenue impact | [Target] | First 90 days | [Name] |
+| Press mentions | [Target] | First 14 days | [Name] |
+
+## Timeline
+| Week | Activity |
+|------|----------|
+| T-4 | Finalize messaging, brief sales/support |
+| T-2 | Content ready, ads set up, beta feedback |
+| T-1 | Final review, pre-launch teasers |
+| T-0 | Launch day |
+| T+1 | Monitor, respond, iterate |
+| T+4 | 30-day review |
+
+## Budget Summary
+| Category | Amount |
+|----------|--------|
+| Content/Creative | [Amount] |
+| Paid Acquisition | [Amount] |
+| Events/PR | [Amount] |
+| **Total** | **[Amount]** |`
+      },
+      {
+        id: "post-mortem", title: "Post-Mortem / Incident Review", category: "launch",
+        description: "Document incidents or project failures with root causes and preventive actions.",
+        markdown: `# Post-Mortem: [Incident/Project Name]
+
+**Date of Incident:** [Date]
+**Author:** [Name]
+**Severity:** Critical / Major / Minor
+**Status:** Draft | Reviewed | Actions In Progress | Closed
+
+---
+
+## Summary
+> [2-3 sentences: What happened, impact, and resolution]
+
+## Timeline
+| Time | Event |
+|------|-------|
+| [HH:MM] | [First sign of issue] |
+| [HH:MM] | [Issue detected / alert fired] |
+| [HH:MM] | [Investigation began] |
+| [HH:MM] | [Root cause identified] |
+| [HH:MM] | [Fix deployed] |
+| [HH:MM] | [Issue fully resolved] |
+
+**Time to Detect:** [Duration]
+**Time to Resolve:** [Duration]
+**Total Duration:** [Duration]
+
+## Impact
+- **Users Affected:** [Number / percentage]
+- **Revenue Impact:** [Estimated $ or transactions]
+- **Data Loss:** [Yes/No — details]
+- **SLA Breach:** [Yes/No]
+
+## Root Cause
+> [Clear explanation of what caused the incident. Be specific and technical.]
+
+### Contributing Factors
+1. [Factor 1 — e.g., "No monitoring on this endpoint"]
+2. [Factor 2 — e.g., "Migration script not tested against production data"]
+3. [Factor 3 — e.g., "Single point of failure in auth service"]
+
+## What Went Well
+- [Positive 1 — e.g., "Team responded quickly"]
+- [Positive 2 — e.g., "Rollback was smooth"]
+
+## What Went Poorly
+- [Negative 1 — e.g., "Took 30 min to identify root cause"]
+- [Negative 2 — e.g., "No runbook for this scenario"]
+
+## Lessons Learned
+1. [Lesson 1]
+2. [Lesson 2]
+3. [Lesson 3]
+
+## Action Items
+| Action | Owner | Priority | Due Date | Status |
+|--------|-------|----------|----------|--------|
+| [Preventive measure 1] | [Name] | P1 | [Date] | To Do |
+| [Preventive measure 2] | [Name] | P2 | [Date] | To Do |
+| [Process improvement] | [Name] | P2 | [Date] | To Do |
+| [Documentation update] | [Name] | P3 | [Date] | To Do |
+
+---
+
+*This post-mortem is blameless. The goal is to improve our systems and processes, not to assign blame.*`
+      },
+    ];
+
+    // ============================
+    // DOWNLOAD HELPERS
+    // ============================
+    function downloadMarkdown(template) {
+      const blob = new Blob([template.markdown], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = template.id + ".md";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadPDF(template) {
+      const win = window.open("", "_blank");
+      const html = marked.parse(template.markdown);
+      win.document.write(`<!DOCTYPE html><html><head><title>${template.title}</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #1e293b; line-height: 1.6; font-size: 14px; }
+          h1 { font-size: 22px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+          h2 { font-size: 17px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; color: #334155; }
+          h3 { font-size: 15px; color: #475569; }
+          table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+          th, td { border: 1px solid #e2e8f0; padding: 6px 10px; text-align: left; }
+          th { background: #f8fafc; font-weight: 600; }
+          blockquote { border-left: 3px solid #cbd5e1; padding-left: 12px; color: #64748b; font-style: italic; }
+          code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 12px; }
+          ul, ol { padding-left: 24px; }
+          li { margin-bottom: 4px; }
+          @media print { body { margin: 20px; } }
+        </style>
+      </head><body>${html}<script>setTimeout(()=>{window.print();},500);<\/script></body></html>`);
+    }
+
+    // ============================
+    // COMPONENTS
+    // ============================
+    function CategoryIcon({ path, className = "" }) {
+      return (
+        <svg className={`w-5 h-5 ${className}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d={path} />
+        </svg>
+      );
+    }
+
+    function CategoryNav({ selected, onSelect }) {
+      return (
+        <div className="flex flex-wrap gap-2 mb-8">
+          <button
+            onClick={() => onSelect(null)}
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+              selected === null
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+            }`}
+          >All Templates</button>
+          {Object.entries(CATEGORIES).map(([key, cat]) => {
+            const s = CAT_STYLES[cat.color];
+            const active = selected === key;
+            return (
+              <button
+                key={key}
+                onClick={() => onSelect(active ? null : key)}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all ${
+                  active
+                    ? `${s.badge} shadow-sm ring-1 ${s.ring}`
+                    : `bg-white text-slate-600 hover:bg-slate-100 border border-slate-200`
+                }`}
+              >
+                <CategoryIcon path={cat.icon} className={active ? s.iconText : "text-slate-400"} />
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    function TemplateCard({ template, onPreview }) {
+      const cat = CATEGORIES[template.category];
+      const s = CAT_STYLES[cat.color];
+      return (
+        <div className="fade-in bg-white rounded-2xl border border-slate-150 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group flex flex-col">
+          <div className="p-5 flex-1">
+            <div className="flex items-start gap-3 mb-3">
+              <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center flex-shrink-0`}>
+                <CategoryIcon path={cat.icon} className={s.iconText} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-slate-800 leading-snug">{template.title}</h3>
+                <span className={`inline-block mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${s.badge}`}>{cat.label}</span>
+              </div>
+            </div>
+            <p className="text-xs text-slate-500 leading-relaxed">{template.description}</p>
+          </div>
+          <div className="px-5 pb-4 pt-0 flex gap-2">
+            <button
+              onClick={() => onPreview(template)}
+              className="flex-1 px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition"
+            >Preview</button>
+            <button
+              onClick={() => downloadMarkdown(template)}
+              className="px-3 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition"
+              title="Download Markdown"
+            >.md</button>
+            <button
+              onClick={() => downloadPDF(template)}
+              className="px-3 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition"
+              title="Download PDF"
+            >.pdf</button>
+          </div>
+        </div>
+      );
+    }
+
+    function PreviewModal({ template, onClose }) {
+      if (!template) return null;
+      const cat = CATEGORIES[template.category];
+      const s = CAT_STYLES[cat.color];
+      const html = useMemo(() => marked.parse(template.markdown), [template]);
+      return (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 sm:pt-16" onClick={onClose}>
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
+          <div
+            className="modal-enter relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg ${s.iconBg} flex items-center justify-center`}>
+                  <CategoryIcon path={cat.icon} className={s.iconText} />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-slate-800">{template.title}</h2>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${s.badge} px-1.5 py-0.5 rounded`}>{cat.label}</span>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition text-slate-400 hover:text-slate-600">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-6 py-5">
+              <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
+            </div>
+            {/* Footer */}
+            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50 flex-shrink-0">
+              <span className="text-xs text-slate-400">Download and customize this template</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => downloadMarkdown(template)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg transition"
+                >Download .md</button>
+                <button
+                  onClick={() => downloadPDF(template)}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition"
+                >Download .pdf</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================
+    // APP
+    // ============================
+    function App() {
+      const [search, setSearch] = useState("");
+      const [category, setCategory] = useState(null);
+      const [preview, setPreview] = useState(null);
+
+      const filtered = useMemo(() => {
+        let list = TEMPLATES;
+        if (category) list = list.filter(t => t.category === category);
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          list = list.filter(t =>
+            t.title.toLowerCase().includes(q) ||
+            t.description.toLowerCase().includes(q) ||
+            CATEGORIES[t.category].label.toLowerCase().includes(q)
+          );
+        }
+        return list;
+      }, [search, category]);
+
+      return (
+        <div className="max-w-5xl mx-auto px-5 py-10">
+          {/* Header */}
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+              </div>
+              <div>
+                <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">PM Toolkit</h1>
+                <p className="text-xs text-slate-500">Free templates & docs for product managers</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-4 text-xs text-slate-400">
+              <span className="font-semibold text-slate-600">{TEMPLATES.length}</span> templates across
+              <span className="font-semibold text-slate-600">{Object.keys(CATEGORIES).length}</span> categories
+              <span className="mx-1">|</span>
+              Download as Markdown or PDF — no signup required
+            </div>
+          </div>
+
+          {/* Search */}
+          <div className="mb-6">
+            <div className="relative">
+              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search templates..."
+                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 focus:ring-2 focus:ring-slate-200 focus:border-slate-400 outline-none shadow-sm transition placeholder:text-slate-400"
+              />
+            </div>
+          </div>
+
+          {/* Categories */}
+          <CategoryNav selected={category} onSelect={setCategory} />
+
+          {/* Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map(t => (
+              <TemplateCard key={t.id} template={t} onPreview={setPreview} />
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-20">
+              <svg className="w-12 h-12 mx-auto text-slate-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <p className="text-sm font-medium text-slate-500">No templates found</p>
+              <p className="text-xs text-slate-400 mt-1">Try a different search term or category</p>
+            </div>
+          )}
+
+          {/* Preview Modal */}
+          <PreviewModal template={preview} onClose={() => setPreview(null)} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
