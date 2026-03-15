@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cross-Functional Feature Spec: Focus Mode — Nicole Surawski</title>
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 820px;
+    }
+
+    html { scroll-behavior: smooth; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px 80px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .prd-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prd-label {
+      display: inline-block;
+      background: #7c3aed;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .prd-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .prd-header .subtitle {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      max-width: 680px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .meta-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .meta-item .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .meta-item .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-accent);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .section p, .section li {
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .section ul, .section ol {
+      padding-left: 22px;
+      margin-top: 8px;
+    }
+    .section li { margin-bottom: 6px; }
+
+    .callout {
+      background: var(--color-accent-light);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout strong { color: var(--color-accent); }
+
+    .callout-green {
+      background: #ecfdf5;
+      border-left-color: #059669;
+    }
+    .callout-green strong { color: #059669; }
+
+    .callout-amber {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+    .callout-amber strong { color: #b45309; }
+
+    .callout-purple {
+      background: #faf5ff;
+      border-left-color: #7c3aed;
+    }
+    .callout-purple strong { color: #7c3aed; }
+
+    .prd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 12px 0;
+    }
+    .prd-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .prd-table th:first-child { border-radius: 8px 0 0 0; }
+    .prd-table th:last-child { border-radius: 0 8px 0 0; }
+    .prd-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .prd-table tr:last-child td { border-bottom: none; }
+    .prd-table tr:hover td { background: var(--color-accent-light); }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .tag-green { background: #ecfdf5; color: #059669; }
+    .tag-amber { background: #fffbeb; color: #b45309; }
+    .tag-red { background: #fef2f2; color: #dc2626; }
+    .tag-blue { background: #eff6ff; color: #2563eb; }
+    .tag-purple { background: #faf5ff; color: #7c3aed; }
+
+    .raci-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .raci-cell {
+      background: var(--color-card-bg);
+      padding: 12px 14px;
+      font-size: 0.88rem;
+    }
+    .raci-header {
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+    }
+    .raci-letter {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      margin-right: 4px;
+    }
+    .raci-r { background: #dbeafe; color: #1d4ed8; }
+    .raci-a { background: #fef2f2; color: #dc2626; }
+    .raci-c { background: #ecfdf5; color: #059669; }
+    .raci-i { background: #f3f4f6; color: #6b7280; }
+
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin: 16px 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--color-border);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -24px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      border: 2px solid var(--color-bg);
+    }
+    .timeline-item.complete::before {
+      background: #059669;
+    }
+    .timeline-week {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .timeline-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+    .timeline-detail {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+    }
+
+    .comm-card {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+    }
+    .comm-card .comm-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .comm-card .comm-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .comm-card .comm-body {
+      font-size: 0.88rem;
+      color: #333;
+      line-height: 1.7;
+    }
+    .comm-card .comm-body p { margin-bottom: 8px; }
+    .comm-card .comm-to {
+      font-size: 0.78rem;
+      color: var(--color-muted);
+      margin-bottom: 8px;
+    }
+
+    .decision-log {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 12px 0;
+    }
+    .decision-log .decision-q {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    .decision-log .decision-options {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      margin-bottom: 6px;
+    }
+    .decision-log .decision-outcome {
+      font-size: 0.88rem;
+      color: #059669;
+      font-weight: 500;
+    }
+    .decision-log .decision-rationale {
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .prd-header h1 { font-size: 1.5rem; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
+      .raci-grid { grid-template-columns: 1fr 1fr; }
+      .prd-table { font-size: 0.82rem; }
+      .prd-table th, .prd-table td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <header class="prd-header">
+    <div class="prd-label">Cross-Functional Feature Spec</div>
+    <h1>Focus Mode for To-Do Prioritizer</h1>
+    <p class="subtitle">A complete feature spec demonstrating how I'd take a feature from idea to launch working with engineering, design, data, and stakeholders.</p>
+  </header>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Product</div>
+      <div class="value">To-Do Prioritizer</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Feature</div>
+      <div class="value">Focus Mode</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Estimated Effort</div>
+      <div class="value">3 sprints (6 weeks)</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Priority</div>
+      <div class="value">P1 — High Impact</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Status</div>
+      <div class="value">Spec Complete</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Related Docs</div>
+      <div class="value"><a href="metrics-todo-prioritizer.html" style="color: var(--color-accent); text-decoration: none;">Metrics Write-Up</a></div>
+    </div>
+  </div>
+
+  <!-- Context -->
+  <div class="section">
+    <h2>Why This Document Exists</h2>
+    <p>Most PM portfolios showcase solo artifacts &mdash; PRDs, teardowns, metrics docs. But product management is fundamentally a team sport. This document shows how I'd take a feature from insight to shipped product by working across functions.</p>
+    <p style="margin-top: 8px;">I chose <strong>Focus Mode</strong> because it originated from the <a href="metrics-todo-prioritizer.html" style="color: var(--color-accent);">metrics & experimentation write-up</a> I built for the To-Do Prioritizer. It was the highest-impact A/B experiment I designed, making it a natural candidate for a full cross-functional spec.</p>
+    <div class="callout-purple callout" style="margin-top: 16px;">
+      <strong>What this demonstrates:</strong> Stakeholder alignment, design collaboration, engineering scoping, launch coordination, decision-making under constraints, and clear async communication.
+    </div>
+  </div>
+
+  <!-- 1. Stakeholder Alignment -->
+  <div class="section">
+    <h2>1. Stakeholder Alignment</h2>
+    <p>Before writing a single requirement, the first job is to align stakeholders on <em>why</em> this feature matters and <em>what success looks like</em>. Here's how I'd frame the opportunity.</p>
+
+    <h3>The Problem (Framed for Leadership)</h3>
+    <p>Users add tasks to the To-Do Prioritizer, but completion rates plateau after the first week. Our funnel data shows a 40% drop-off between "task scored" and "task completed." Users tell us the prioritized list is helpful but overwhelming &mdash; they don't know where to start when they have 15+ active tasks.</p>
+
+    <h3>The Hypothesis</h3>
+    <div class="callout">
+      <strong>If</strong> we surface a focused view of a user's top 3 tasks for the day, <strong>then</strong> weekly task completion rate will increase by 15%, <strong>because</strong> reducing the visible scope lowers decision fatigue and creates a clear starting point.
+    </div>
+
+    <h3>Why Now?</h3>
+    <ul>
+      <li><strong>Retention signal:</strong> Users who complete 3+ tasks/week retain at 2x the rate of those who complete fewer. Focus Mode directly targets this behavior.</li>
+      <li><strong>Low technical risk:</strong> The scoring engine already exists. Focus Mode is a presentation layer change, not a new algorithm.</li>
+      <li><strong>Competitive gap:</strong> Todoist and TickTick have "Today" views but no intelligent prioritization. This combines both.</li>
+    </ul>
+
+    <h3>What I'd Ask For in the Kickoff</h3>
+    <table class="prd-table">
+      <thead>
+        <tr><th>Question</th><th>Why It Matters</th><th>Expected Answer</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Are we optimizing for completion rate or engagement time?</td>
+          <td>These can conflict &mdash; Focus Mode reduces time-in-app but increases completions</td>
+          <td>Completion rate (aligns with North Star)</td>
+        </tr>
+        <tr>
+          <td>Can we ship this as an A/B test first, or does leadership want a full rollout?</td>
+          <td>Affects scope, timeline, and whether we need a feature flag system</td>
+          <td>A/B test first with 50/50 split</td>
+        </tr>
+        <tr>
+          <td>Is there design capacity in the next sprint, or should we spec for a later cycle?</td>
+          <td>No point writing a detailed design brief if design is at capacity</td>
+          <td>Design available starting Sprint 4</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. Design Collaboration -->
+  <div class="section">
+    <h2>2. Design Collaboration</h2>
+    <p>I don't hand designers pixel-perfect mockups &mdash; I hand them constraints, context, and user problems. Here's the design brief I'd share.</p>
+
+    <h3>Design Brief: Focus Mode</h3>
+    <div class="comm-card">
+      <div class="comm-header">
+        <div class="comm-icon" style="background: #7c3aed;">DB</div>
+        Design Brief
+      </div>
+      <div class="comm-to">Shared in: #design-reviews channel &bull; Async-first, sync follow-up if needed</div>
+      <div class="comm-body">
+        <p><strong>User problem:</strong> Users with 10+ tasks feel overwhelmed by the full list. They've told us "I know the app ranked everything, but I still don't know what to do first today."</p>
+        <p><strong>What we need:</strong> A focused view that shows only the top 3 tasks for today, accessible from the main task list without losing context of the full backlog.</p>
+        <p><strong>Constraints:</strong></p>
+        <ul style="margin-bottom: 8px;">
+          <li>Must work within the existing layout (no new pages or navigation changes)</li>
+          <li>Must be accessible via keyboard shortcut and toggle button</li>
+          <li>Users must be able to exit Focus Mode without losing their place</li>
+          <li>Dark mode support required (existing CSS variables should handle this)</li>
+        </ul>
+        <p><strong>What I'm NOT specifying:</strong> Visual treatment, animation, iconography, exact placement of the toggle. Those are design decisions. I've included a rough wireframe sketch below to communicate the concept, not the solution.</p>
+        <p><strong>Open questions for design:</strong></p>
+        <ul>
+          <li>Should completed tasks in Focus Mode animate away and pull in task #4, or should the user see "2 of 3 done" as a progress signal?</li>
+          <li>Is there a way to make the transition between list view and Focus Mode feel lightweight rather than like a mode switch?</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Design Decisions I'd Defer vs. Own</h3>
+    <table class="prd-table">
+      <thead>
+        <tr><th>Decision</th><th>Owner</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How many tasks to show in Focus Mode</td>
+          <td><span class="tag tag-blue">PM</span></td>
+          <td>Product decision tied to the hypothesis (3 tasks reduces overwhelm). Would revisit based on experiment data.</td>
+        </tr>
+        <tr>
+          <td>Visual treatment of the focused view</td>
+          <td><span class="tag tag-purple">Design</span></td>
+          <td>Design has context on visual hierarchy, spacing, and consistency with the design system.</td>
+        </tr>
+        <tr>
+          <td>Animation and transition behavior</td>
+          <td><span class="tag tag-purple">Design</span></td>
+          <td>Interaction design is a design discipline. I provide the functional states; design decides how to move between them.</td>
+        </tr>
+        <tr>
+          <td>Whether Focus Mode is opt-in or default</td>
+          <td><span class="tag tag-blue">PM</span></td>
+          <td>Directly affects the experiment design and metrics. Starting as opt-in via toggle for the A/B test.</td>
+        </tr>
+        <tr>
+          <td>Keyboard shortcut binding</td>
+          <td><span class="tag tag-green">Engineering</span></td>
+          <td>Engineering knows what shortcuts are already in use and what's conventional for the platform.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. Engineering Scoping -->
+  <div class="section">
+    <h2>3. Engineering Scoping</h2>
+    <p>I believe PMs should come to engineering scoping with a clear problem and flexible solution space &mdash; not a spec that treats engineers as implementers. Here's how I'd approach the technical discussion.</p>
+
+    <h3>Pre-Scoping: What I'd Prepare</h3>
+    <ul>
+      <li><strong>Functional requirements doc</strong> (what Focus Mode needs to do, not how to build it)</li>
+      <li><strong>Edge cases list</strong> (what happens with 0 tasks? With all tasks completed? With tasks added mid-focus?)</li>
+      <li><strong>Priority tiers</strong> so engineering can propose scope cuts if needed</li>
+    </ul>
+
+    <h3>Requirements by Priority</h3>
+    <table class="prd-table">
+      <thead>
+        <tr><th>Priority</th><th>Requirement</th><th>Notes for Eng</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-red">P0</span></td>
+          <td>Toggle between full list and Focus Mode (top 3 tasks by score)</td>
+          <td>Core feature. Scoring logic already exists &mdash; this is a filter, not a new algorithm.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">P0</span></td>
+          <td>Mark tasks complete from within Focus Mode</td>
+          <td>Should use existing completion handler. No new state management needed.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">P0</span></td>
+          <td>Persist Focus Mode preference in localStorage</td>
+          <td>If user prefers Focus Mode, it should be the default on next visit.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">P1</span></td>
+          <td>Progress indicator ("2 of 3 completed today")</td>
+          <td>Design-dependent. May be a simple counter or a visual progress bar.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-amber">P1</span></td>
+          <td>Keyboard shortcut to toggle Focus Mode</td>
+          <td>Nice-to-have for power users. Eng picks the binding.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">P2</span></td>
+          <td>"Why these 3?" tooltip explaining the scoring rationale</td>
+          <td>Builds trust in the prioritization. Defer if it adds significant scope.</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">P2</span></td>
+          <td>Celebration micro-interaction when all 3 tasks are completed</td>
+          <td>Engagement driver but not core value. Cut first if scope is tight.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Questions I'd Ask Engineering</h3>
+    <div class="callout">
+      <strong>My approach:</strong> I come to scoping with questions, not answers. Engineers know the codebase. My job is to make sure they have enough context to make good technical decisions.
+    </div>
+    <ul>
+      <li>"The scoring engine re-ranks on every task change. In Focus Mode, should we snapshot the top 3 at the start of the day, or re-rank dynamically? What are the tradeoffs?"</li>
+      <li>"What's the simplest way to implement the feature flag for the A/B test? Do we already have a pattern for this, or would we need to build one?"</li>
+      <li>"I scoped this as 2 sprints for P0 + P1. Does that feel right, or am I off? What would you cut to fit it in 1 sprint?"</li>
+      <li>"Are there any accessibility concerns I should flag in the design brief? I want to make sure Focus Mode works with screen readers."</li>
+    </ul>
+
+    <h3>Decision Log: Scoping Tradeoffs</h3>
+    <p>These are the kinds of decisions that come up in scoping sessions. I document them so the team can reference them later and so stakeholders understand why certain choices were made.</p>
+
+    <div class="decision-log">
+      <div class="decision-q">Should Focus Mode re-rank dynamically or snapshot at start of day?</div>
+      <div class="decision-options">Options: (A) Dynamic re-ranking on every change, (B) Snapshot top 3 at midnight/first open, (C) Snapshot but allow manual refresh</div>
+      <div class="decision-outcome">Decision: Option C &mdash; Snapshot with manual refresh</div>
+      <div class="decision-rationale">Rationale: Dynamic re-ranking would be disorienting ("my #2 task just disappeared"). A static snapshot is predictable. Adding a refresh button gives users control without complexity. Engineering confirmed this is the simplest implementation.</div>
+    </div>
+
+    <div class="decision-log">
+      <div class="decision-q">Should completing all 3 focus tasks auto-exit Focus Mode?</div>
+      <div class="decision-options">Options: (A) Auto-exit to full list, (B) Show "all done" state with option to add more, (C) Pull in task #4-5-6 automatically</div>
+      <div class="decision-outcome">Decision: Option B &mdash; "All done" state</div>
+      <div class="decision-rationale">Rationale: The point of Focus Mode is to create a sense of completion. Auto-pulling in more tasks defeats that purpose. The "all done" state reinforces the accomplishment and lets the user choose whether to continue.</div>
+    </div>
+
+    <div class="decision-log">
+      <div class="decision-q">Should we build a feature flag system or use a simpler approach for the A/B test?</div>
+      <div class="decision-options">Options: (A) Build a reusable feature flag system, (B) Simple localStorage-based random assignment, (C) Use a third-party service (LaunchDarkly, etc.)</div>
+      <div class="decision-outcome">Decision: Option B &mdash; localStorage random assignment</div>
+      <div class="decision-rationale">Rationale: We only need one experiment right now. Building a full feature flag system is over-engineering. A localStorage coin flip on first visit is 10 lines of code and sufficient for a 50/50 split. We'd revisit if we run 3+ concurrent experiments.</div>
+    </div>
+  </div>
+
+  <!-- 4. RACI -->
+  <div class="section">
+    <h2>4. RACI Matrix</h2>
+    <p>Clear ownership prevents the "I thought you were handling that" problem. Here's how I'd assign responsibilities for Focus Mode.</p>
+
+    <table class="prd-table">
+      <thead>
+        <tr><th>Activity</th><th>PM (Me)</th><th>Engineering</th><th>Design</th><th>Data/Analytics</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Define success metrics and experiment design</td>
+          <td><span class="raci-letter raci-a">A</span><span class="raci-letter raci-r">R</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-c">C</span></td>
+        </tr>
+        <tr>
+          <td>Write functional requirements and edge cases</td>
+          <td><span class="raci-letter raci-a">A</span><span class="raci-letter raci-r">R</span></td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Design the Focus Mode UI and interactions</td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td><span class="raci-letter raci-a">A</span><span class="raci-letter raci-r">R</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Implement Focus Mode and feature flag</td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-a">A</span><span class="raci-letter raci-r">R</span></td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Instrument analytics events</td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td><span class="raci-letter raci-r">R</span></td>
+          <td></td>
+          <td><span class="raci-letter raci-a">A</span></td>
+        </tr>
+        <tr>
+          <td>QA and edge case testing</td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td><span class="raci-letter raci-a">A</span><span class="raci-letter raci-r">R</span></td>
+          <td><span class="raci-letter raci-c">C</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Analyze experiment results and recommend next steps</td>
+          <td><span class="raci-letter raci-a">A</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-r">R</span></td>
+        </tr>
+        <tr>
+          <td>Stakeholder update and go/no-go decision</td>
+          <td><span class="raci-letter raci-a">A</span><span class="raci-letter raci-r">R</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-i">I</span></td>
+          <td><span class="raci-letter raci-c">C</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. Launch Timeline -->
+  <div class="section">
+    <h2>5. Launch Timeline</h2>
+    <p>Here's the 6-week plan I'd propose. Each week has a clear deliverable, a responsible party, and a checkpoint.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-week">Week 1 &mdash; Alignment</div>
+        <div class="timeline-title">Kickoff + Design Brief Handoff</div>
+        <div class="timeline-detail">PM shares design brief and requirements. Engineering reviews for feasibility. Design starts exploration. <strong>Checkpoint:</strong> Async Loom review of the brief with all stakeholders.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">Week 2 &mdash; Design</div>
+        <div class="timeline-title">Design Review + Engineering Scoping</div>
+        <div class="timeline-detail">Design presents 2-3 concepts. PM and Eng provide feedback. Engineering finalizes sprint plan and identifies technical risks. <strong>Checkpoint:</strong> Design decision documented, sprint backlog created.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">Week 3-4 &mdash; Build</div>
+        <div class="timeline-title">Sprint 1: Core Focus Mode (P0 Requirements)</div>
+        <div class="timeline-detail">Engineering implements toggle, filtered view, completion handling, and localStorage persistence. PM writes QA test cases and preps analytics event specs. <strong>Checkpoint:</strong> Mid-sprint demo of working toggle.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">Week 5 &mdash; Polish</div>
+        <div class="timeline-title">Sprint 2: P1 Items + Feature Flag + Analytics</div>
+        <div class="timeline-detail">Progress indicator, keyboard shortcut, A/B test infrastructure, and analytics instrumentation. PM begins drafting the stakeholder update template. <strong>Checkpoint:</strong> Feature flag working in staging, analytics events firing.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">Week 6 &mdash; Launch</div>
+        <div class="timeline-title">QA, Soft Launch, and Monitoring</div>
+        <div class="timeline-detail">Full QA pass on both variants. Gradual rollout: 10% &rarr; 50%. PM monitors key metrics daily for the first week. <strong>Checkpoint:</strong> Go/no-go on full 50% split after 48 hours of clean data.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Communication Artifacts -->
+  <div class="section">
+    <h2>6. Communication Samples</h2>
+    <p>A big part of PM work is keeping people aligned without scheduling meetings. Here are examples of the async communications I'd send at key moments.</p>
+
+    <h3>Kickoff Slack Message</h3>
+    <div class="comm-card">
+      <div class="comm-header">
+        <div class="comm-icon" style="background: #059669;">S</div>
+        #product-updates
+      </div>
+      <div class="comm-to">@eng-team @design @data-team</div>
+      <div class="comm-body">
+        <p><strong>Starting work on Focus Mode for To-Do Prioritizer</strong></p>
+        <p>We're kicking off a new feature to help users complete more tasks by reducing overwhelm. Focus Mode will surface a user's top 3 tasks in a dedicated view.</p>
+        <p><strong>Why:</strong> Users who complete 3+ tasks/week retain at 2x the rate. Our funnel shows a 40% drop-off at the "task scored &rarr; task completed" step. We believe this is a decision fatigue problem, not a scoring problem.</p>
+        <p><strong>Timeline:</strong> 6 weeks (design brief ready now, eng starts Sprint 4)</p>
+        <p><strong>How to stay in the loop:</strong> All decisions and updates will be posted in this thread. No meetings required unless someone wants to discuss synchronously.</p>
+        <p>Design brief: [link] | Requirements: [link] | Experiment spec: [link]</p>
+      </div>
+    </div>
+
+    <h3>Mid-Sprint Status Update</h3>
+    <div class="comm-card">
+      <div class="comm-header">
+        <div class="comm-icon" style="background: var(--color-accent);">U</div>
+        Weekly Status: Focus Mode
+      </div>
+      <div class="comm-to">@stakeholders &bull; Week 4 of 6</div>
+      <div class="comm-body">
+        <p><strong>Status: On Track</strong></p>
+        <p><strong>Shipped this week:</strong> Core toggle working in staging, tasks filter correctly by score, completion from Focus Mode updates the main list.</p>
+        <p><strong>In progress:</strong> Feature flag implementation (eng), progress indicator design (design), analytics event spec review (data).</p>
+        <p><strong>Blocked on:</strong> Nothing currently.</p>
+        <p><strong>Decision needed:</strong> None this week. Last week's decision on snapshot vs. dynamic ranking is documented <a href="#" style="color: var(--color-accent);">[here]</a>.</p>
+        <p><strong>Risks:</strong> Design is exploring whether the progress indicator should be persistent or dismissible. If this takes longer than expected, we'll ship without it and add in a fast-follow. No impact to the launch date.</p>
+      </div>
+    </div>
+
+    <h3>Experiment Results Summary</h3>
+    <div class="comm-card">
+      <div class="comm-header">
+        <div class="comm-icon" style="background: #f59e0b;">R</div>
+        Experiment Results: Focus Mode A/B Test
+      </div>
+      <div class="comm-to">@leadership @eng-team @design @data-team</div>
+      <div class="comm-body">
+        <p><strong>Result: Ship It</strong></p>
+        <p>After 2 weeks at 50% traffic, Focus Mode users show:</p>
+        <ul style="margin: 8px 0;">
+          <li><strong>+18% weekly task completion rate</strong> (target was +15%) &mdash; statistically significant at p &lt; 0.01</li>
+          <li><strong>+12% 7-day retention</strong> &mdash; secondary metric, also significant</li>
+          <li><strong>No degradation</strong> in tasks added per user (guardrail metric held)</li>
+        </ul>
+        <p><strong>Recommendation:</strong> Roll out to 100% of users. Begin planning P2 features (scoring rationale tooltip, completion celebration) for next quarter.</p>
+        <p><strong>What surprised us:</strong> Users in Focus Mode actually added <em>more</em> tasks than control, not fewer. Hypothesis: completing tasks creates momentum to add new ones. Worth exploring in the next experiment cycle.</p>
+        <p>Full analysis: [link] | Raw data: [link] | Next steps doc: [link]</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Retrospective -->
+  <div class="section">
+    <h2>7. How I'd Run the Retro</h2>
+    <p>After shipping, I'd facilitate a lightweight retrospective focused on process, not just outcomes. Here's the format I prefer.</p>
+
+    <h3>Retro Format: Start / Stop / Continue</h3>
+    <table class="prd-table">
+      <thead>
+        <tr><th>Category</th><th>Example Prompts I'd Seed</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Start</strong></td>
+          <td>
+            <ul style="padding-left: 16px; margin: 0;">
+              <li>Should we start writing design briefs for all features, or was this overkill?</li>
+              <li>Should we start using a shared decision log for all projects?</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Stop</strong></td>
+          <td>
+            <ul style="padding-left: 16px; margin: 0;">
+              <li>Was the weekly status update useful, or did it feel like overhead?</li>
+              <li>Did the RACI cause confusion or help?</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Continue</strong></td>
+          <td>
+            <ul style="padding-left: 16px; margin: 0;">
+              <li>Async-first communication (no recurring meetings for this project)</li>
+              <li>Scoping sessions with explicit tradeoff documentation</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout-green callout" style="margin-top: 16px;">
+      <strong>Why I include the retro:</strong> Shipping the feature is only half the job. The other half is making the next project better. A PM who doesn't close the loop on process is leaving improvement on the table.
+    </div>
+  </div>
+
+  <!-- Key Takeaways -->
+  <div class="section">
+    <h2>What This Demonstrates</h2>
+    <table class="prd-table">
+      <thead>
+        <tr><th>PM Skill</th><th>Where It Shows Up</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Stakeholder alignment</td>
+          <td>Framing the problem for leadership, asking the right kickoff questions, weekly status updates</td>
+        </tr>
+        <tr>
+          <td>Design collaboration</td>
+          <td>Writing a constraint-based design brief, deferring visual decisions to design, distinguishing PM vs. design ownership</td>
+        </tr>
+        <tr>
+          <td>Engineering partnership</td>
+          <td>Coming to scoping with questions not answers, priority tiers for scope flexibility, documenting technical tradeoffs</td>
+        </tr>
+        <tr>
+          <td>Data-informed decisions</td>
+          <td>Experiment design, analytics instrumentation, results interpretation, knowing when data is sufficient</td>
+        </tr>
+        <tr>
+          <td>Async communication</td>
+          <td>Kickoff message, status updates, decision log, experiment results &mdash; all written for async consumption</td>
+        </tr>
+        <tr>
+          <td>Process design</td>
+          <td>RACI matrix, launch timeline with checkpoints, retrospective facilitation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
