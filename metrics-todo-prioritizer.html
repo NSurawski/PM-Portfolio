@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrics &amp; Experimentation: To-Do Prioritizer — Nicole Surawski</title>
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 820px;
+    }
+
+    html { scroll-behavior: smooth; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px 80px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .prd-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prd-label {
+      display: inline-block;
+      background: #059669;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .prd-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .prd-header .subtitle {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      max-width: 680px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .meta-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .meta-item .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .meta-item .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-accent);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .section p, .section li {
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .section ul, .section ol {
+      padding-left: 22px;
+      margin-top: 8px;
+    }
+    .section li { margin-bottom: 6px; }
+
+    .callout {
+      background: var(--color-accent-light);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout strong { color: var(--color-accent); }
+
+    .callout-green {
+      background: #ecfdf5;
+      border-left-color: #059669;
+    }
+    .callout-green strong { color: #059669; }
+
+    .callout-amber {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+    .callout-amber strong { color: #b45309; }
+
+    .callout-purple {
+      background: #faf5ff;
+      border-left-color: #7c3aed;
+    }
+    .callout-purple strong { color: #7c3aed; }
+
+    .prd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 12px 0;
+    }
+    .prd-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .prd-table th:first-child { border-radius: 8px 0 0 0; }
+    .prd-table th:last-child { border-radius: 0 8px 0 0; }
+    .prd-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .prd-table tr:last-child td { border-bottom: none; }
+    .prd-table tr:hover td { background: var(--color-accent-light); }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .tag-green { background: #ecfdf5; color: #059669; }
+    .tag-amber { background: #fffbeb; color: #b45309; }
+    .tag-red { background: #fef2f2; color: #dc2626; }
+    .tag-blue { background: #eff6ff; color: #2563eb; }
+    .tag-purple { background: #faf5ff; color: #7c3aed; }
+
+    .experiment-card {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .experiment-card .exp-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .experiment-card .exp-badge {
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 2px;
+      background: var(--color-accent); color: #fff;
+      padding: 4px 12px; border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .experiment-card h4 { font-size: 1rem; font-weight: 700; }
+    .experiment-card .exp-meta {
+      display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .experiment-card p { font-size: 0.9rem; color: #444; margin-bottom: 10px; }
+    .experiment-card .exp-detail {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-top: 14px;
+      font-size: 0.88rem;
+    }
+    .experiment-card .exp-detail h5 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .experiment-card .exp-detail p { font-size: 0.85rem; margin-bottom: 6px; }
+    .experiment-card .exp-detail ul { font-size: 0.85rem; padding-left: 18px; }
+    .experiment-card .exp-detail li { margin-bottom: 4px; color: #555; }
+
+    .metric-card {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .metric-card .metric-type {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .metric-type-north { background: #059669; color: #fff; }
+    .metric-type-primary { background: var(--color-accent); color: #fff; }
+    .metric-type-secondary { background: #7c3aed; color: #fff; }
+    .metric-type-guardrail { background: #dc2626; color: #fff; }
+    .metric-card .metric-details h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 3px; }
+    .metric-card .metric-details p { font-size: 0.82rem; color: var(--color-muted); margin: 0; }
+
+    .funnel-step {
+      display: flex; align-items: stretch; margin-bottom: 0;
+    }
+    .funnel-bar {
+      flex-shrink: 0; width: 60px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .funnel-bar .bar {
+      width: 100%; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; color: #fff;
+      padding: 8px 0;
+    }
+    .funnel-bar .connector {
+      width: 2px; height: 12px; background: var(--color-border);
+    }
+    .funnel-content {
+      flex: 1; padding: 10px 0 10px 16px;
+    }
+    .funnel-content h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+    .funnel-content p { font-size: 0.8rem; color: var(--color-muted); margin: 0; }
+
+    .prd-footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .prd-header h1 { font-size: 1.5rem; }
+      .page { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <div class="prd-header">
+    <span class="prd-label">Metrics &amp; Experimentation</span>
+    <h1>To-Do Prioritizer: What I'd Measure and How I'd Experiment</h1>
+    <p class="subtitle">A data-driven analysis of what metrics matter, how to instrument the product, and three A/B experiments I'd run to improve task completion rates &mdash; written as if the app had 1,000+ active users.</p>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Author</div>
+      <div class="value">Nicole Surawski</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Product</div>
+      <div class="value">To-Do Prioritizer</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Assumed Scale</div>
+      <div class="value">1,000+ MAU</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Date</div>
+      <div class="value">March 2026</div>
+    </div>
+  </div>
+
+  <!-- Context -->
+  <div class="section">
+    <h2>Context</h2>
+    <p>The To-Do Prioritizer is a task management tool that scores tasks across urgency, importance, and effort using a weighted formula, then auto-categorizes them into High, Medium, and Low priority. Users can adjust weights via presets (Balanced, Deadline-driven, Impact-first, Quick wins).</p>
+    <p style="margin-top: 10px;">This document defines the metrics framework and experimentation plan as if the product had 1,000+ monthly active users. The goal is to demonstrate how I'd use data to identify friction, validate hypotheses, and make product decisions &mdash; not just ship features.</p>
+
+    <div class="callout callout-green">
+      <strong>The central question:</strong> Does scoring and ranking tasks actually help people <em>complete</em> more tasks, or does it just help them <em>organize</em> tasks? The entire metrics framework is designed to answer this.
+    </div>
+  </div>
+
+  <!-- North Star -->
+  <div class="section">
+    <h2>North Star Metric</h2>
+    <div class="metric-card">
+      <span class="metric-type metric-type-north">North Star</span>
+      <div class="metric-details">
+        <h4>Weekly Task Completion Rate</h4>
+        <p>% of tasks marked complete within 7 days of being scored. This measures whether prioritization drives follow-through, not just organization. A user who scores 10 tasks and completes 7 has a 70% WCR.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>Why this metric:</strong> Task <em>creation</em> measures engagement but not value. Task <em>completion</em> measures whether the product delivers on its promise: helping you do the right things, not just list them. The 7-day window captures most natural task lifecycles while excluding stale backlog items.
+    </div>
+  </div>
+
+  <!-- Metric Framework -->
+  <div class="section">
+    <h2>Metrics Framework</h2>
+    <p style="margin-bottom: 16px;">Organized into four tiers &mdash; each serves a different decision-making purpose:</p>
+
+    <h3>Primary Metrics (Product Health)</h3>
+    <div class="metric-card">
+      <span class="metric-type metric-type-primary">Primary</span>
+      <div class="metric-details">
+        <h4>Scoring Adoption Rate</h4>
+        <p>% of added tasks that get scored (moved from "Unprioritized" to a priority bucket). Target: &ge; 75%. If users add tasks but don't score them, the core value prop isn't landing.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-type metric-type-primary">Primary</span>
+      <div class="metric-details">
+        <h4>D7 Retention</h4>
+        <p>% of new users who return within 7 days. Target: &ge; 40%. First session is curiosity; second session is adoption. This tells us whether the product earns a spot in the user's workflow.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-type metric-type-primary">Primary</span>
+      <div class="metric-details">
+        <h4>Session Frequency</h4>
+        <p>Average sessions per active user per week. Target: &ge; 3. A task manager that's opened less than 3x/week isn't embedded in the daily workflow.</p>
+      </div>
+    </div>
+
+    <h3>Secondary Metrics (Feature Engagement)</h3>
+    <div class="metric-card">
+      <span class="metric-type metric-type-secondary">Secondary</span>
+      <div class="metric-details">
+        <h4>Preset Exploration Rate</h4>
+        <p>% of users who try at least 2 weight presets. Validates that context-aware weighting is a real need, not a feature for its own sake.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-type metric-type-secondary">Secondary</span>
+      <div class="metric-details">
+        <h4>Subtask Adoption</h4>
+        <p>% of tasks with at least 1 subtask. Measures demand for task decomposition. Informs whether to invest more in subtask UX in v2.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-type metric-type-secondary">Secondary</span>
+      <div class="metric-details">
+        <h4>Manual Override Rate</h4>
+        <p>% of scored tasks that get manually reordered via drag-and-drop after scoring. High override rate (&gt; 30%) suggests the scoring model doesn't match user judgment &mdash; a signal to revisit the formula.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-type metric-type-secondary">Secondary</span>
+      <div class="metric-details">
+        <h4>Celebration Trigger Rate</h4>
+        <p>% of sessions where all tasks are completed (triggering confetti). Low rates may mean users add tasks faster than they complete them &mdash; the list grows but never empties.</p>
+      </div>
+    </div>
+
+    <h3>Guardrail Metrics (Things That Should NOT Change)</h3>
+    <div class="metric-card">
+      <span class="metric-type metric-type-guardrail">Guardrail</span>
+      <div class="metric-details">
+        <h4>Time to First Task</h4>
+        <p>Seconds from page load to first task added. Should stay under 15 seconds. If an experiment increases scoring adoption but slows down initial task entry, it's a net negative.</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <span class="metric-type metric-type-guardrail">Guardrail</span>
+      <div class="metric-details">
+        <h4>Task Deletion Rate</h4>
+        <p>% of tasks deleted (not completed). Should stay under 15%. A spike in deletions after a change could mean users are frustrated, not organized.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Funnel -->
+  <div class="section">
+    <h2>User Funnel</h2>
+    <p style="margin-bottom: 16px;">The critical conversion path with expected drop-off at each stage:</p>
+
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Action</th>
+          <th>Expected Rate</th>
+          <th>Drop-off Signal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Land</strong></td>
+          <td>User opens the app</td>
+          <td>100%</td>
+          <td>&mdash;</td>
+        </tr>
+        <tr>
+          <td><strong>2. Add</strong></td>
+          <td>Creates first task</td>
+          <td>~85%</td>
+          <td>If &lt; 70%: onboarding is confusing or value prop is unclear</td>
+        </tr>
+        <tr>
+          <td><strong>3. Score</strong></td>
+          <td>Opens scoring panel and saves a priority</td>
+          <td>~55%</td>
+          <td>If &lt; 40%: scoring panel is too complex or not discoverable</td>
+        </tr>
+        <tr>
+          <td><strong>4. Organize</strong></td>
+          <td>Scores 3+ tasks (enough to see ranking in action)</td>
+          <td>~40%</td>
+          <td>If &lt; 25%: scoring doesn't feel worth the effort per task</td>
+        </tr>
+        <tr>
+          <td><strong>5. Complete</strong></td>
+          <td>Marks at least 1 scored task as done</td>
+          <td>~35%</td>
+          <td>If &lt; 20%: tool helps organize but doesn't drive action</td>
+        </tr>
+        <tr>
+          <td><strong>6. Return</strong></td>
+          <td>Comes back within 7 days</td>
+          <td>~25%</td>
+          <td>If &lt; 15%: product is interesting but not habit-forming</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-amber">
+      <strong>The biggest drop-off risk:</strong> Stage 2 &rarr; Stage 3 (Add &rarr; Score). Users add tasks easily, but the scoring panel requires opening a sub-UI, setting 3 inputs, and saving. This is the friction point most likely to kill adoption &mdash; and the focus of Experiment #1 below.
+    </div>
+  </div>
+
+  <!-- Instrumentation Plan -->
+  <div class="section">
+    <h2>Instrumentation Plan</h2>
+    <p style="margin-bottom: 12px;">Key events I'd log to power the metrics above. Each event includes the minimum properties needed for analysis:</p>
+
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Trigger</th>
+          <th>Properties</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>task_added</code></td>
+          <td>User creates a new task</td>
+          <td><code>session_id</code>, <code>task_count</code> (total tasks), <code>time_since_session_start</code></td>
+        </tr>
+        <tr>
+          <td><code>scoring_panel_opened</code></td>
+          <td>User clicks the prioritize button on a task</td>
+          <td><code>task_id</code>, <code>task_status</code> (unprioritized/active)</td>
+        </tr>
+        <tr>
+          <td><code>task_scored</code></td>
+          <td>User saves a priority score</td>
+          <td><code>task_id</code>, <code>score</code>, <code>priority</code> (high/med/low), <code>importance</code>, <code>effort</code>, <code>has_due_date</code>, <code>time_in_panel</code></td>
+        </tr>
+        <tr>
+          <td><code>task_completed</code></td>
+          <td>User marks a task as done</td>
+          <td><code>task_id</code>, <code>priority</code>, <code>time_since_scored</code>, <code>was_high_priority</code></td>
+        </tr>
+        <tr>
+          <td><code>task_deleted</code></td>
+          <td>User deletes a task</td>
+          <td><code>task_id</code>, <code>was_scored</code>, <code>priority</code></td>
+        </tr>
+        <tr>
+          <td><code>preset_applied</code></td>
+          <td>User selects a weight preset</td>
+          <td><code>preset_name</code>, <code>previous_preset</code>, <code>scored_task_count</code></td>
+        </tr>
+        <tr>
+          <td><code>task_reordered</code></td>
+          <td>User drags a task to a new position</td>
+          <td><code>task_id</code>, <code>from_section</code>, <code>to_section</code>, <code>was_scored</code></td>
+        </tr>
+        <tr>
+          <td><code>celebration_triggered</code></td>
+          <td>All tasks marked complete</td>
+          <td><code>total_tasks</code>, <code>session_duration</code>, <code>scored_task_count</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Experiments -->
+  <div class="section">
+    <h2>Three Experiments I'd Run</h2>
+    <p style="margin-bottom: 20px;">Each experiment targets a specific conversion point in the funnel, has a clear hypothesis, and defines success criteria upfront.</p>
+
+    <!-- Experiment 1 -->
+    <div class="experiment-card">
+      <div class="exp-header">
+        <span class="exp-badge">Experiment 1</span>
+        <h4>Inline Scoring vs. Panel Scoring</h4>
+      </div>
+      <div class="exp-meta">
+        <span class="tag tag-blue">Funnel Stage: Add &rarr; Score</span>
+        <span class="tag tag-amber">Medium Effort</span>
+        <span class="tag tag-green">High Expected Impact</span>
+      </div>
+
+      <p><strong>Hypothesis:</strong> The current scoring panel (a separate expandable UI below each task) creates too much friction. If we let users score tasks inline &mdash; directly on the task row &mdash; more users will score their tasks, increasing the Scoring Adoption Rate.</p>
+
+      <div class="exp-detail">
+        <h5>Control (A)</h5>
+        <p>Current behavior: click a button to open a full scoring panel below the task. Set due date, importance (1-5 dots), effort (1-5 dots), see live preview, click "Save Priority."</p>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Variant (B)</h5>
+        <p>Inline scoring: when a user adds a task, three compact inputs appear directly on the task row &mdash; a small date picker, a 1-5 importance selector, and a 1-5 effort selector. Score calculates and displays in real-time. No "Save" button; values persist on change. The full panel is still available for users who want the detailed view.</p>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Success Criteria</h5>
+        <ul>
+          <li><strong>Primary:</strong> Scoring Adoption Rate increases by &ge; 15 percentage points (e.g., 55% &rarr; 70%)</li>
+          <li><strong>Secondary:</strong> Time-to-first-score decreases by &ge; 30%</li>
+          <li><strong>Guardrail:</strong> Task Completion Rate does not decrease (inline scoring shouldn't make tasks feel "done" just because they're scored)</li>
+          <li><strong>Guardrail:</strong> Time to First Task stays under 15 seconds</li>
+        </ul>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Expected Duration &amp; Sample Size</h5>
+        <p>At 1,000 MAU with ~500 weekly active users, a 50/50 split gives 250 users per group. With a baseline scoring rate of 55% and MDE of 15pp, we'd need ~2 weeks to reach 95% statistical significance (80% power).</p>
+      </div>
+
+      <div class="callout" style="margin-top: 14px;">
+        <strong>Why this experiment matters:</strong> The Add &rarr; Score drop-off is the biggest hole in the funnel. If users don't score tasks, the entire scoring model is invisible &mdash; and the product is just another to-do list. Reducing friction at this step has the highest leverage on downstream metrics.
+      </div>
+    </div>
+
+    <!-- Experiment 2 -->
+    <div class="experiment-card">
+      <div class="exp-header">
+        <span class="exp-badge">Experiment 2</span>
+        <h4>Smart Defaults: Auto-Suggest Importance and Effort</h4>
+      </div>
+      <div class="exp-meta">
+        <span class="tag tag-blue">Funnel Stage: Score &rarr; Organize</span>
+        <span class="tag tag-amber">Medium-High Effort</span>
+        <span class="tag tag-amber">Medium Expected Impact</span>
+      </div>
+
+      <p><strong>Hypothesis:</strong> Users who score 1-2 tasks but stop before 3 do so because scoring each task feels repetitive. If we auto-suggest importance and effort values based on the task title (using keyword matching or a simple heuristic), users will score more tasks because the inputs are pre-filled and they just need to confirm or adjust.</p>
+
+      <div class="exp-detail">
+        <h5>Control (A)</h5>
+        <p>Current behavior: importance defaults to 3 and effort defaults to 3 for every task. Users must manually evaluate and set each value.</p>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Variant (B)</h5>
+        <p>Smart defaults: the app pre-fills importance and effort based on simple keyword heuristics:</p>
+        <ul>
+          <li>Keywords like "urgent," "deadline," "ASAP," "client" &rarr; importance: 5</li>
+          <li>Keywords like "quick," "small," "simple," "email" &rarr; effort: 1-2</li>
+          <li>Keywords like "research," "plan," "redesign," "migration" &rarr; effort: 4-5</li>
+          <li>All other tasks &rarr; defaults to 3/3 (same as control)</li>
+        </ul>
+        <p style="margin-top: 8px;">Pre-filled values are visually distinguished (e.g., lighter dot color) so users know they can adjust them. A small "suggested" label appears next to auto-filled values.</p>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Success Criteria</h5>
+        <ul>
+          <li><strong>Primary:</strong> % of users scoring 3+ tasks increases by &ge; 10 percentage points</li>
+          <li><strong>Secondary:</strong> Average time spent in the scoring panel decreases by &ge; 20%</li>
+          <li><strong>Guardrail:</strong> Manual Override Rate stays below 40% (if users are constantly changing suggestions, the heuristics are wrong and adding friction, not removing it)</li>
+          <li><strong>Guardrail:</strong> Score accuracy &mdash; the distribution of final scores should not collapse (i.e., smart defaults shouldn't cause all tasks to cluster at the same priority)</li>
+        </ul>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Expected Duration &amp; Sample Size</h5>
+        <p>Same 50/50 split at 1,000 MAU. With a smaller expected effect size (10pp), we'd need ~3 weeks to reach statistical significance.</p>
+      </div>
+
+      <div class="callout" style="margin-top: 14px;">
+        <strong>Why this experiment matters:</strong> Scoring 3+ tasks is the threshold where the ranking model becomes useful (you need enough data points for prioritization to be meaningful). If we can push more users past this activation point, downstream retention and completion metrics should improve as a second-order effect.
+      </div>
+    </div>
+
+    <!-- Experiment 3 -->
+    <div class="experiment-card">
+      <div class="exp-header">
+        <span class="exp-badge">Experiment 3</span>
+        <h4>Focus Mode: Show Only the Top 3 Tasks</h4>
+      </div>
+      <div class="exp-meta">
+        <span class="tag tag-blue">Funnel Stage: Organize &rarr; Complete</span>
+        <span class="tag tag-green">Low Effort</span>
+        <span class="tag tag-amber">Medium Expected Impact</span>
+      </div>
+
+      <p><strong>Hypothesis:</strong> Users with 10+ scored tasks still experience decision fatigue because the full ranked list is visible. Seeing 15 tasks — even ranked — is still overwhelming. If we offer a "Focus Mode" that shows only the top 3 tasks (hiding everything else), users will complete more tasks per session because the visible scope feels manageable.</p>
+
+      <div class="exp-detail">
+        <h5>Control (A)</h5>
+        <p>Current behavior: all tasks visible, grouped into High / Medium / Low sections with full scrollable list.</p>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Variant (B)</h5>
+        <p>A toggle at the top of the task list: "Focus Mode." When enabled:</p>
+        <ul>
+          <li>Only the top 3 highest-scored tasks are visible</li>
+          <li>A subtle "and X more tasks" indicator shows below</li>
+          <li>When a task is completed, the next-highest task slides in</li>
+          <li>The progress bar still reflects total tasks, so users see overall progress</li>
+          <li>Focus Mode persists to localStorage so it stays on across sessions</li>
+        </ul>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Success Criteria</h5>
+        <ul>
+          <li><strong>Primary:</strong> Tasks completed per session increases by &ge; 20% for users with 10+ tasks</li>
+          <li><strong>Secondary:</strong> Celebration Trigger Rate increases (more users complete all tasks)</li>
+          <li><strong>Guardrail:</strong> Users don't delete more tasks (hiding tasks shouldn't cause users to forget about them)</li>
+          <li><strong>Guardrail:</strong> Users don't disable Focus Mode within 60 seconds (which would signal it's more annoying than helpful)</li>
+        </ul>
+      </div>
+
+      <div class="exp-detail" style="margin-top: 10px;">
+        <h5>Expected Duration &amp; Sample Size</h5>
+        <p>This experiment targets a subset (users with 10+ tasks), reducing the eligible population. At 1,000 MAU, ~300-400 users likely have 10+ tasks. A 50/50 split with 150-200 per group needs ~4 weeks to reach significance.</p>
+      </div>
+
+      <div class="callout" style="margin-top: 14px;">
+        <strong>Why this experiment matters:</strong> This tests a fundamental product philosophy question: does <em>showing less</em> drive more action than <em>showing everything ranked</em>? If Focus Mode wins, it suggests that prioritization value comes from narrowing scope, not just ordering tasks. That insight would reshape the product roadmap toward constraint-based design.
+      </div>
+    </div>
+  </div>
+
+  <!-- Experiment Prioritization -->
+  <div class="section">
+    <h2>Experiment Prioritization</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Experiment</th>
+          <th>Funnel Impact</th>
+          <th>Build Effort</th>
+          <th>Learning Value</th>
+          <th>Run Order</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1. Inline Scoring</td>
+          <td><span class="tag tag-green">High</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-green">High</span></td>
+          <td><strong>First</strong> &mdash; largest funnel gap</td>
+        </tr>
+        <tr>
+          <td>3. Focus Mode</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td><span class="tag tag-green">High</span></td>
+          <td><strong>Second</strong> &mdash; cheap to build, high learning value</td>
+        </tr>
+        <tr>
+          <td>2. Smart Defaults</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-amber">Medium-High</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><strong>Third</strong> &mdash; depends on Experiment 1 results</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-purple">
+      <strong>Sequencing logic:</strong> Run Experiment 1 first because the Add &rarr; Score drop-off is the biggest funnel gap &mdash; fixing it has the highest leverage. Run Focus Mode second because it's cheap and the learning (does less = more action?) informs the entire product direction. Run Smart Defaults last because its value depends on how many users are reaching the scoring panel after Experiment 1.
+    </div>
+  </div>
+
+  <!-- What I'd Do With Results -->
+  <div class="section">
+    <h2>What I'd Do With the Results</h2>
+
+    <h3>If Experiment 1 wins (Inline Scoring)</h3>
+    <ul>
+      <li>Ship inline scoring as the default experience</li>
+      <li>Keep the full scoring panel as an "Advanced" option for power users</li>
+      <li>Revisit the scoring formula &mdash; with more users scoring, we'll have enough data to evaluate whether the 3-factor model is sufficient or if we need a 4th factor</li>
+    </ul>
+
+    <h3>If Experiment 1 loses</h3>
+    <ul>
+      <li>The problem isn't friction &mdash; it's motivation. Users can find the scoring panel but don't see enough value</li>
+      <li>Next move: test showing a "before/after" comparison (your unranked list vs. your prioritized list) to make the value of scoring more tangible</li>
+    </ul>
+
+    <h3>If Experiment 3 wins (Focus Mode)</h3>
+    <ul>
+      <li>Make Focus Mode the default for users with 10+ tasks</li>
+      <li>Explore a "daily planning" workflow: each morning, the app presents your top 3 and asks "Is this your plan for today?"</li>
+      <li>This validates the thesis that the product should be opinionated about what to show, not just rank everything</li>
+    </ul>
+
+    <h3>If Experiment 3 loses</h3>
+    <ul>
+      <li>Users want the full picture, not a constrained view &mdash; the value is in the ranking itself, not in hiding lower items</li>
+      <li>Invest instead in better visual hierarchy (make the top task dramatically more prominent without hiding others)</li>
+    </ul>
+  </div>
+
+  <!-- Key Takeaway -->
+  <div class="section">
+    <h2>Key Takeaway</h2>
+    <div class="callout callout-green">
+      <strong>Good PM experimentation isn't about testing random ideas &mdash; it's about testing hypotheses that change how you think about the product.</strong> Each experiment above isn't just "does this feature work?" &mdash; it's a question about user behavior. Does reducing friction increase engagement? Does showing less drive more action? Does pre-filling inputs help or hurt? The answers to these questions shape not just the next feature, but the product strategy.
+    </div>
+  </div>
+
+  <div class="prd-footer">
+    Metrics &amp; Experimentation by Nicole Surawski &middot; March 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
+  </div>
+
+</div>
+
+</body>
+</html>
