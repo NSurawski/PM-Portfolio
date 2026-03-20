@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD: Feature Prioritizer — Nicole Surawski</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='7' width='20' height='14' rx='2' ry='2'/><path d='M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2'/><line x1='12' y1='12' x2='12' y2='16'/><line x1='10' y1='14' x2='14' y2='14'/></svg>" />
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 820px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px 80px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .prd-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prd-label {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .prd-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .prd-header .subtitle {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      max-width: 640px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .meta-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .meta-item .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .meta-item .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-accent);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .section p, .section li {
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .section ul, .section ol {
+      padding-left: 22px;
+      margin-top: 8px;
+    }
+    .section li { margin-bottom: 6px; }
+
+    .callout {
+      background: var(--color-accent-light);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout strong { color: var(--color-accent); }
+
+    .callout-warn {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+    .callout-warn strong { color: #b45309; }
+
+    .prd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 12px 0;
+    }
+    .prd-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .prd-table th:first-child { border-radius: 8px 0 0 0; }
+    .prd-table th:last-child { border-radius: 0 8px 0 0; }
+    .prd-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .prd-table tr:last-child td { border-bottom: none; }
+    .prd-table tr:hover td { background: var(--color-accent-light); }
+
+    .tag {
+      display: inline-block;
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .tag-green { background: #ecfdf5; color: #059669; }
+    .tag-amber { background: #fffbeb; color: #b45309; }
+    .tag-red { background: #fef2f2; color: #dc2626; }
+
+    .formula-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: "SF Mono", "Fira Code", "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+    .formula-box .comment { color: #64748b; }
+    .formula-box .highlight { color: #818cf8; font-weight: 600; }
+
+    .arch-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: "SF Mono", "Fira Code", "Courier New", monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .prd-footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .prd-header h1 { font-size: 1.5rem; }
+      .page { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <div class="prd-header">
+    <span class="prd-label">Product Requirements Document</span>
+    <h1>Feature Prioritizer</h1>
+    <p class="subtitle">A visual prioritization tool that helps PMs score, rank, and communicate feature priorities using proven frameworks (RICE, ICE, Value vs. Effort) &mdash; designed for fast, shareable decision-making.</p>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Author</div>
+      <div class="value">Nicole Surawski</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Version</div>
+      <div class="value">v1.0</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Status</div>
+      <div class="value">Shipped (MVP)</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Target User</div>
+      <div class="value">IC PMs &amp; PM Leaders</div>
+    </div>
+  </div>
+
+  <!-- Purpose & Vision -->
+  <div class="section">
+    <h2>Purpose &amp; Vision</h2>
+    <p>A visual prioritization tool that helps PMs score, rank, and communicate feature priorities using proven frameworks (RICE, ICE, Value vs. Effort). Designed for individual PMs who need a fast, shareable way to make and defend prioritization decisions.</p>
+  </div>
+
+  <!-- Problem Statement -->
+  <div class="section">
+    <h2>Problem Statement</h2>
+    <p>PMs constantly face the question: &ldquo;Why are we building X instead of Y?&rdquo; Most teams rely on spreadsheets or gut instinct. Spreadsheets lack visualization, are hard to share, and don&rsquo;t enforce consistent scoring. This leads to:</p>
+    <ul>
+      <li><strong>Inconsistent prioritization</strong> across features</li>
+      <li><strong>Difficulty communicating trade-offs</strong> to stakeholders</li>
+      <li><strong>Time wasted</strong> rebuilding priority matrices every quarter</li>
+    </ul>
+    <div class="callout">
+      <strong>The insight:</strong> PMs don&rsquo;t need another spreadsheet &mdash; they need a tool that enforces consistent scoring, visualizes trade-offs, and produces artifacts they can share in planning meetings.
+    </div>
+  </div>
+
+  <!-- User Segments -->
+  <div class="section">
+    <h2>User Segments</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Segment</th>
+          <th>Profile</th>
+          <th>Primary Need</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>IC PMs (Primary)</strong></td>
+          <td>Mid-level PMs at B2B SaaS companies (2&ndash;8 years experience), managing 10&ndash;30 feature requests per quarter, currently using spreadsheets or Notion tables</td>
+          <td>Present prioritization rationale to leadership with consistent, defensible scoring</td>
+        </tr>
+        <tr>
+          <td><strong>PM Leaders (Secondary)</strong></td>
+          <td>Directors/VPs reviewing team prioritization proposals</td>
+          <td>Quick visual summary for alignment; value consistency across teams</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- User Stories -->
+  <div class="section">
+    <h2>User Stories</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>As a...</th>
+          <th>I want to...</th>
+          <th>So that...</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>PM</td>
+          <td>Input features with scores across multiple dimensions</td>
+          <td>I can evaluate them systematically</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>PM</td>
+          <td>See a visual matrix of priority vs. effort</td>
+          <td>I can quickly spot high-impact, low-effort wins</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>PM</td>
+          <td>Switch between RICE, ICE, and custom frameworks</td>
+          <td>I can use whichever framework my team prefers</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>PM</td>
+          <td>Export or share my prioritization</td>
+          <td>I can present it in planning meetings</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>PM</td>
+          <td>Save and revisit prioritizations</td>
+          <td>I can update scores as new data comes in</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Prioritization Frameworks -->
+  <div class="section">
+    <h2>Prioritization Frameworks</h2>
+    <p>The tool supports three industry-standard frameworks, each suited to different decision contexts:</p>
+
+    <h3>RICE Score</h3>
+    <div class="formula-box">
+      <span class="highlight">RICE</span> = (Reach &times; Impact &times; Confidence) / Effort<br><br>
+      <span class="comment">// Reach: How many users impacted per quarter? (numeric)</span><br>
+      <span class="comment">// Impact: Per-user impact magnitude:</span><br>
+      Minimal &rarr; <span class="highlight">0.25</span> &nbsp;|&nbsp; Low &rarr; <span class="highlight">0.5</span> &nbsp;|&nbsp; Medium &rarr; <span class="highlight">1</span> &nbsp;|&nbsp; High &rarr; <span class="highlight">2</span> &nbsp;|&nbsp; Massive &rarr; <span class="highlight">3</span><br><br>
+      <span class="comment">// Confidence: How confident in estimates? (50&ndash;100%)</span><br>
+      <span class="comment">// Effort: Person-months required (numeric)</span>
+    </div>
+
+    <h3>ICE Score</h3>
+    <div class="formula-box">
+      <span class="highlight">ICE</span> = Impact &times; Confidence &times; Ease<br><br>
+      <span class="comment">// Impact: 1&ndash;10 scale</span><br>
+      <span class="comment">// Confidence: 1&ndash;10 scale</span><br>
+      <span class="comment">// Ease: 1&ndash;10 scale (inverse of effort)</span>
+    </div>
+
+    <h3>Value vs. Effort (2&times;2 Matrix)</h3>
+    <div class="formula-box">
+      <span class="comment">// Value: 1&ndash;10 scale (combines reach + impact)</span><br>
+      <span class="comment">// Effort: 1&ndash;10 scale</span><br><br>
+      <span class="highlight">Quadrants:</span><br>
+      High Value + Low Effort &rarr; <span style="color: #22c55e;">Quick Wins</span><br>
+      High Value + High Effort &rarr; <span style="color: #818cf8;">Big Bets</span><br>
+      Low Value + Low Effort &rarr; <span style="color: #f59e0b;">Fill-Ins</span><br>
+      Low Value + High Effort &rarr; <span style="color: #ef4444;">Money Pit</span>
+    </div>
+  </div>
+
+  <!-- Feature Requirements -->
+  <div class="section">
+    <h2>Feature Requirements (v1)</h2>
+
+    <h3>Must Have</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-01</td>
+          <td>Add/edit/delete features</td>
+          <td>Each feature has a name, description, and framework-specific scores</td>
+        </tr>
+        <tr>
+          <td>FR-02</td>
+          <td>RICE score calculator</td>
+          <td>Auto-computed priority score from Reach, Impact, Confidence, and Effort inputs</td>
+        </tr>
+        <tr>
+          <td>FR-03</td>
+          <td>Visual 2&times;2 matrix</td>
+          <td>Scatter plot with features plotted by value vs. effort, with labeled quadrants</td>
+        </tr>
+        <tr>
+          <td>FR-04</td>
+          <td>Ranked list view</td>
+          <td>Features sorted by priority score in descending order</td>
+        </tr>
+        <tr>
+          <td>FR-05</td>
+          <td>Data persistence</td>
+          <td>All features and scores persist to localStorage and survive page refreshes</td>
+        </tr>
+        <tr>
+          <td>FR-06</td>
+          <td>Dark theme</td>
+          <td>Consistent with portfolio project aesthetic</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Should Have</h3>
+    <ul>
+      <li>Toggle between RICE and ICE frameworks</li>
+      <li>Copy prioritization as formatted markdown</li>
+      <li>Color-code features by category/theme</li>
+      <li>Hover/click on matrix dots to see feature details</li>
+    </ul>
+
+    <h3>Could Have</h3>
+    <ul>
+      <li>AI-generated prioritization suggestions based on feature descriptions</li>
+      <li>Import features from a pasted list (CSV or plain text)</li>
+      <li>Export as PNG image for slide decks</li>
+    </ul>
+  </div>
+
+  <!-- Information Architecture -->
+  <div class="section">
+    <h2>Information Architecture</h2>
+    <div class="arch-box">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474;  Header: "Feature Prioritizer" + framework  &#9474;
+&#9474;  selector (RICE / ICE / Value vs Effort)    &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;
+&#9474;                      &#9474;                      &#9474;
+&#9474;   Feature Input      &#9474;   Visualization      &#9474;
+&#9474;   &amp; Scored List      &#9474;   (2x2 Matrix)       &#9474;
+&#9474;                      &#9474;                      &#9474;
+&#9474;   - Add feature      &#9474;   Scatter plot with   &#9474;
+&#9474;   - Score sliders    &#9474;   quadrant labels    &#9474;
+&#9474;   - Ranked table     &#9474;   - Quick Wins       &#9474;
+&#9474;   - Delete/edit      &#9474;   - Big Bets         &#9474;
+&#9474;                      &#9474;   - Fill-Ins         &#9474;
+&#9474;                      &#9474;   - Money Pit        &#9474;
+&#9474;                      &#9474;                      &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9524;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;
+&#9474;  Footer: copy markdown &middot; clear all          &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</div>
+  </div>
+
+  <!-- Technical Architecture -->
+  <div class="section">
+    <h2>Technical Architecture (v1)</h2>
+    <ul>
+      <li><strong>Frontend:</strong> React 18 with Vite (same stack as meeting-summarizer)</li>
+      <li><strong>Visualization:</strong> Recharts for the scatter plot / matrix visualization</li>
+      <li><strong>Styling:</strong> Inline CSS with dark theme</li>
+      <li><strong>Persistence:</strong> localStorage for all feature data and scores</li>
+      <li><strong>Hosting:</strong> Fully client-side &mdash; no backend required</li>
+    </ul>
+    <div class="callout">
+      <strong>Architecture decision:</strong> React with Vite was chosen for this project (vs. CDN-loaded React in the To-Do Prioritizer) because the scatter plot visualization benefits from proper module imports via Recharts. The build step is a worthwhile trade-off for charting capabilities.
+    </div>
+  </div>
+
+  <!-- Success Metrics -->
+  <div class="section">
+    <h2>Success Metrics</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Target</th>
+          <th>How to Measure</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Feature count per session</td>
+          <td>5+ features scored</td>
+          <td>localStorage data</td>
+        </tr>
+        <tr>
+          <td>Framework adoption</td>
+          <td>Users try 2+ frameworks</td>
+          <td>Track framework switches</td>
+        </tr>
+        <tr>
+          <td>Export usage</td>
+          <td>30% of sessions use copy/export</td>
+          <td>Event tracking</td>
+        </tr>
+        <tr>
+          <td>Return usage</td>
+          <td>Users revisit saved prioritizations</td>
+          <td>localStorage presence on load</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Risks & Mitigations -->
+  <div class="section">
+    <h2>Risks &amp; Mitigations</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Impact</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Scatter plot readability with many features</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td>Limit to 20 features; add hover tooltips for detail</td>
+        </tr>
+        <tr>
+          <td>Users unfamiliar with RICE/ICE frameworks</td>
+          <td><span class="tag tag-red">High</span></td>
+          <td>Add inline tooltips explaining each dimension with examples</td>
+        </tr>
+        <tr>
+          <td>localStorage limits (~5MB)</td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td>Unlikely with text-only data; add export as backup</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Out of Scope -->
+  <div class="section">
+    <h2>Out of Scope (v1)</h2>
+    <div class="callout callout-warn">
+      <strong>Explicitly excluded</strong> to ship a focused MVP:
+    </div>
+    <ul>
+      <li>Multi-user collaboration &mdash; single-user tool only</li>
+      <li>Backend or database &mdash; localStorage only</li>
+      <li>Integration with Jira, Linear, or Asana</li>
+      <li>Historical tracking of score changes over time</li>
+      <li>Mobile optimization &mdash; desktop-first for v1</li>
+    </ul>
+    <div class="callout">
+      <strong>v1 constraint:</strong> This is a portfolio project &mdash; visual polish and clear PM thinking are prioritized over edge-case handling.
+    </div>
+  </div>
+
+  <div class="prd-footer">
+    PRD by Nicole Surawski &middot; March 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
+  </div>
+
+</div>
+
+</body>
+</html>
