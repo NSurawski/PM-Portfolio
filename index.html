@@ -147,6 +147,38 @@
     .cta-links a:hover { opacity: 0.85; }
     .cta-availability { font-size: 0.85rem; color: var(--color-muted); margin-top: 16px; }
 
+    /* ── More Projects ── */
+    .more-projects {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .more-projects a {
+      font-size: 0.82rem;
+      color: var(--color-accent);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .more-projects a:hover {
+      background: var(--color-accent-light);
+      border-color: var(--color-accent);
+    }
+
+    /* ── Fade-in animation ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* ── Footer ── */
     footer {
       text-align: center; padding: 40px 24px; font-size: 0.82rem; color: var(--color-muted);
@@ -176,6 +208,8 @@
       .cta-box { padding: 24px 18px; }
       .cta-links { flex-direction: column; align-items: center; }
       .cta-links a { width: 100%; max-width: 280px; text-align: center; }
+      .more-projects { flex-direction: column; }
+      .more-projects a { text-align: center; }
     }
   </style>
 </head>
@@ -431,6 +465,14 @@
       <a href="prd-feature-prioritizer.html" class="view-link">View PRD</a>
       <a href="https://nsurawski.github.io/feature-prioritizer/" class="demo-link" target="_blank" rel="noopener">Try Live Demo &rarr;</a>
     </div>
+
+    <p style="font-size: 0.85rem; color: var(--color-muted); margin-top: 28px; margin-bottom: 8px; font-weight: 500;">More projects &amp; artifacts:</p>
+    <div class="more-projects">
+      <a href="meeting-summarizer.html">Meeting Summarizer Demo</a>
+      <a href="prd-meeting-summarizer.html">Meeting Summarizer PRD</a>
+      <a href="pm-toolkit.html">PM Toolkit</a>
+      <a href="prd-pm-toolkit.html">PM Toolkit PRD</a>
+    </div>
   </section>
 
   <!-- What I'm Looking For -->
@@ -455,6 +497,22 @@
   <footer>
     Portfolio compiled March 2026 &middot; Nicole Surawski &middot; Product Management
   </footer>
+
+  <script>
+    // Fade-in animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.project-card, .cta-box, .stat-card, .strength-card').forEach(el => {
+      el.classList.add('fade-in');
+      observer.observe(el);
+    });
+  </script>
 
 </body>
 </html>
