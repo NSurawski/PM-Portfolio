@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nicole Surawski — Product Management Portfolio</title>
+  <meta property="og:title" content="Nicole Surawski — PM Portfolio">
+  <meta property="og:description" content="Product Management portfolio featuring case studies, PRDs, product teardowns, metrics frameworks, and live app demos. Transitioning from Solutions Consulting to PM in B2B SaaS.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nsurawski.github.io/PM-Portfolio/">
+  <meta name="description" content="Product Management portfolio by Nicole Surawski. Case studies, PRDs, product teardowns, metrics frameworks, and live app demos.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='7' width='20' height='14' rx='2' ry='2'/><path d='M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2'/><line x1='12' y1='12' x2='12' y2='16'/><line x1='10' y1='14' x2='14' y2='14'/></svg>" />
   <style>
     :root {
@@ -150,11 +155,27 @@
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
+      .hero { padding: 50px 18px 40px; }
       .hero h1 { font-size: 1.8rem; }
-      .hero .nav a { display: block; margin: 6px auto; max-width: 200px; }
-      section { padding: 40px 20px; }
-      .mapping-table { font-size: 0.8rem; }
-      .mapping-table td, .mapping-table th { padding: 10px; }
+      .hero .tagline { font-size: 0.95rem; }
+      .hero .nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .hero .nav a { margin: 0; padding: 7px 16px; font-size: 0.82rem; }
+      section { padding: 32px 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-card .number { font-size: 1.3rem; }
+      .stat-card .label { font-size: 0.75rem; }
+      .strengths-grid { gap: 8px; }
+      .strength-card { padding: 10px 16px; font-size: 0.82rem; }
+      .mapping-table { font-size: 0.78rem; }
+      .mapping-table td, .mapping-table th { padding: 8px; }
+      .project-card { padding: 20px; }
+      .project-card .num { font-size: 0.75rem; min-width: 28px; padding: 3px 8px; }
+      .project-card h3 { font-size: 1rem; }
+      .project-card .desc { font-size: 0.88rem; }
+      .project-card .view-link, .project-card .demo-link { font-size: 0.82rem; padding: 7px 16px; }
+      .cta-box { padding: 24px 18px; }
+      .cta-links { flex-direction: column; align-items: center; }
+      .cta-links a { width: 100%; max-width: 280px; text-align: center; }
     }
   </style>
 </head>
@@ -274,7 +295,7 @@
   <section id="work-samples">
     <h2>PM Work Samples</h2>
     <p class="section-intro">The following artifacts were created independently to demonstrate core PM skills. Each was built from a real problem, not a template exercise.</p>
-    <p style="font-size: 0.9rem; color: var(--color-muted); margin-top: 8px; margin-bottom: 24px;"><strong style="color: var(--color-accent);">Where to start:</strong> Try the <a href="teardown-slack.html" style="color: var(--color-accent);">Slack Teardown</a> to see how I think about product, or follow the <a href="prd-todo-prioritizer.html" style="color: var(--color-accent);">To-Do Prioritizer</a> from PRD &rarr; <a href="todo-prioritizer.html" style="color: var(--color-accent);">live app</a> &rarr; <a href="metrics-todo-prioritizer.html" style="color: var(--color-accent);">metrics</a> &rarr; <a href="research-todo-prioritizer.html" style="color: var(--color-accent);">research plan</a> &rarr; <a href="collab-focus-mode.html" style="color: var(--color-accent);">collaboration spec</a> to see how I ship.</p>
+    <p style="font-size: 0.9rem; color: var(--color-muted); margin-top: 8px; margin-bottom: 24px;"><strong style="color: var(--color-accent);">Where to start:</strong> Read the <a href="case-studies.html" style="color: var(--color-accent);">Criteo case studies</a> for real-world outcomes, the <a href="teardown-slack.html" style="color: var(--color-accent);">Slack Teardown</a> to see how I think, or the <a href="prd-todo-prioritizer.html" style="color: var(--color-accent);">To-Do Prioritizer</a> to follow one product from PRD to launch.</p>
 
     <div class="project-card">
       <div class="header">
