@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD: User Feedback Synthesizer — Nicole Surawski</title>
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-text: #1a1a1a;
+      --color-muted: #555;
+      --color-accent: #2563eb;
+      --color-accent-light: #eff6ff;
+      --color-border: #e5e7eb;
+      --color-card-bg: #fff;
+      --max-width: 820px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px 80px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .prd-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .prd-label {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .prd-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .prd-header .subtitle {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      max-width: 640px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .meta-item {
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .meta-item .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+    .meta-item .value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-accent);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+    .section p, .section li {
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .section ul, .section ol {
+      padding-left: 22px;
+      margin-top: 8px;
+    }
+    .section li { margin-bottom: 6px; }
+
+    .callout {
+      background: var(--color-accent-light);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .callout strong { color: var(--color-accent); }
+
+    .callout-warn {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+    .callout-warn callout strong { color: #b45309; }
+
+    .prd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 12px 0;
+    }
+    .prd-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .prd-table th:first-child { border-radius: 8px 0 0 0; }
+    .prd-table th:last-child { border-radius: 0 8px 0 0; }
+    .prd-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    .prd-table tr:last-child td { border-bottom: none; }
+    .prd-table tr:hover td { background: var(--color-accent-light); }
+
+    .tag {
+      display: inline-block;
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .tag-green { background: #ecfdf5; color: #059669; }
+    .tag-amber { background: #fffbeb; color: #b45309; }
+    .tag-red { background: #fef2f2; color: #dc2626; }
+
+    .formula-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: "SF Mono", "Fira Code", "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+    .formula-box .comment { color: #64748b; }
+    .formula-box .highlight { color: #818cf8; font-weight: 600; }
+
+    .prd-footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .prd-header h1 { font-size: 1.5rem; }
+      .page { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+
+  <div class="prd-header">
+    <span class="prd-label">Product Requirements Document</span>
+    <h1>User Feedback Synthesizer</h1>
+    <p class="subtitle">An agentic AI tool that ingests raw user feedback, clusters it into themes, scores by frequency and sentiment, extracts feature requests with supporting quotes, and outputs a prioritized insights report ready for roadmap planning.</p>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Author</div>
+      <div class="value">Nicole Surawski</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Version</div>
+      <div class="value">v1.0</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Status</div>
+      <div class="value">Shipped (MVP)</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Target User</div>
+      <div class="value">Product Managers &amp; Researchers</div>
+    </div>
+  </div>
+
+  <!-- TL;DR -->
+  <div class="section">
+    <h2>TL;DR</h2>
+    <p>PMs drown in unstructured user feedback &mdash; support tickets, app reviews, survey responses, interview transcripts &mdash; and spend hours manually reading, categorizing, and synthesizing it. The User Feedback Synthesizer is an agentic AI tool that ingests raw feedback, autonomously clusters it into themes, scores each theme by frequency and sentiment, extracts actionable feature requests with supporting quotes, and outputs a prioritized insights report ready for roadmap planning.</p>
+  </div>
+
+  <!-- Problem Statement -->
+  <div class="section">
+    <h2>Problem Statement</h2>
+    <p>Product managers collect feedback from dozens of sources &mdash; support tickets, NPS surveys, user interviews, app store reviews, sales call notes &mdash; but synthesizing it is a manual, time-consuming process. This creates several problems:</p>
+    <ol>
+      <li><strong>Synthesis bottleneck</strong> &mdash; Reading and tagging hundreds of feedback entries takes hours, delaying insight delivery to the team</li>
+      <li><strong>Recency bias</strong> &mdash; PMs over-index on the last few pieces of feedback they read rather than seeing the full picture</li>
+      <li><strong>Inconsistent taxonomy</strong> &mdash; Different PMs categorize the same feedback differently, making cross-team aggregation unreliable</li>
+      <li><strong>Lost signal</strong> &mdash; Subtle patterns (e.g., 15 users mentioning the same friction point in slightly different words) get missed when processing manually</li>
+      <li><strong>Quote hunting</strong> &mdash; When presenting insights to stakeholders, PMs spend additional time finding the best supporting quotes for each theme</li>
+    </ol>
+    <div class="callout">
+      <strong>The insight:</strong> Feedback synthesis is a pattern recognition task &mdash; exactly the kind of work where AI agents excel. An agent can read every entry, maintain a consistent taxonomy, detect patterns across hundreds of data points, and surface the most representative quotes &mdash; all in seconds instead of hours.
+    </div>
+  </div>
+
+  <!-- Target Users -->
+  <div class="section">
+    <h2>Target Users</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>User Segment</th>
+          <th>Pain Point</th>
+          <th>Primary Benefit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Product Managers</strong></td>
+          <td>Spend 4&ndash;8 hours per sprint manually reading and tagging feedback</td>
+          <td>Get a prioritized insights report in minutes, not hours</td>
+        </tr>
+        <tr>
+          <td><strong>UX Researchers</strong></td>
+          <td>Need to synthesize interview transcripts into themes quickly</td>
+          <td>Automated affinity mapping with supporting evidence</td>
+        </tr>
+        <tr>
+          <td><strong>Customer Success Leads</strong></td>
+          <td>Know what customers are saying but struggle to communicate patterns to product</td>
+          <td>Shareable, data-backed reports that quantify customer pain</td>
+        </tr>
+        <tr>
+          <td><strong>Founders / Solo PMs</strong></td>
+          <td>No dedicated research team; feedback sits unprocessed in spreadsheets</td>
+          <td>Lightweight synthesis without needing a research org</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- User Stories -->
+  <div class="section">
+    <h2>User Stories</h2>
+    <ol>
+      <li><strong>As a PM with 200 support tickets</strong>, I want to paste them in and get a clustered theme report so I can identify the top 5 issues without reading every ticket.</li>
+      <li><strong>As a PM preparing for roadmap planning</strong>, I want to see feature requests ranked by frequency and sentiment so I can make data-backed prioritization arguments.</li>
+      <li><strong>As a PM presenting to leadership</strong>, I want supporting quotes auto-linked to each theme so I can tell a compelling story without manually searching for examples.</li>
+      <li><strong>As a researcher analyzing interview transcripts</strong>, I want the tool to identify themes across participants so I can build an affinity map faster.</li>
+      <li><strong>As a PM</strong>, I want to see sentiment distribution per theme (positive/negative/neutral) so I can distinguish &ldquo;users want X&rdquo; from &ldquo;users are frustrated by Y.&rdquo;</li>
+      <li><strong>As a PM</strong>, I want to drill down into any theme and see all the raw feedback entries that belong to it so I can verify the clustering is accurate.</li>
+      <li><strong>As a PM</strong>, I want to export the insights report as a shareable format so I can attach it to a product brief or Slack it to the team.</li>
+    </ol>
+  </div>
+
+  <!-- Core Workflow -->
+  <div class="section">
+    <h2>Core Workflow (Agentic Pipeline)</h2>
+    <p>The tool uses a multi-step agentic AI pipeline &mdash; the AI doesn&rsquo;t just summarize, it autonomously executes a structured analysis workflow:</p>
+
+    <h3>Step 1: Ingest &amp; Clean</h3>
+    <ul>
+      <li>User pastes raw feedback (free-text, CSV, or bullet points)</li>
+      <li>Agent normalizes the input: strips duplicates, identifies individual entries, flags ambiguous items</li>
+    </ul>
+
+    <h3>Step 2: Classify &amp; Cluster</h3>
+    <ul>
+      <li>Agent reads every entry and autonomously creates theme categories</li>
+      <li>Each entry gets tagged with one or more themes</li>
+      <li>Agent merges near-duplicate themes (e.g., &ldquo;slow loading&rdquo; and &ldquo;performance issues&rdquo; &rarr; single cluster)</li>
+    </ul>
+
+    <h3>Step 3: Score &amp; Rank</h3>
+    <ul>
+      <li>Each theme is scored by:</li>
+      <ul>
+        <li><strong>Frequency</strong> &mdash; how many entries mention this theme</li>
+        <li><strong>Sentiment intensity</strong> &mdash; average sentiment strength (strong negative vs. mild frustration)</li>
+        <li><strong>Actionability</strong> &mdash; whether the feedback implies a concrete product change</li>
+      </ul>
+      <li>Themes are ranked by a composite score</li>
+    </ul>
+
+    <h3>Step 4: Extract &amp; Attribute</h3>
+    <ul>
+      <li>For each theme, the agent selects the 2&ndash;3 most representative quotes from the raw feedback</li>
+      <li>Feature requests are extracted as standalone items with frequency counts</li>
+    </ul>
+
+    <h3>Step 5: Synthesize &amp; Report</h3>
+    <ul>
+      <li>Agent generates a structured insights report:</li>
+      <ul>
+        <li>Executive summary (top 3 takeaways)</li>
+        <li>Theme breakdown with frequency, sentiment, and quotes</li>
+        <li>Feature request leaderboard</li>
+        <li>Recommended next steps</li>
+      </ul>
+    </ul>
+
+    <div class="formula-box">
+      <span class="highlight">User Input</span> <span class="comment">(raw text)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+      <span class="highlight">[Step 1]</span> Ingest &amp; Clean &rarr; normalized entries[]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+      <span class="highlight">[Step 2]</span> Classify &amp; Cluster &rarr; themes[] with entry assignments<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+      <span class="highlight">[Step 3]</span> Score &amp; Rank &rarr; scored themes[] with sentiment<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+      <span class="highlight">[Step 4]</span> Extract &amp; Attribute &rarr; quotes[] + feature requests[]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&darr;<br>
+      <span class="highlight">[Step 5]</span> Synthesize &rarr; executive summary + full report
+    </div>
+
+    <p style="margin-top: 12px;">Each step is a separate Claude API call with:</p>
+    <ul>
+      <li>Structured JSON output (using tool_use or JSON mode)</li>
+      <li>The previous step&rsquo;s output as context</li>
+      <li>Step-specific system prompts optimized for that task</li>
+    </ul>
+  </div>
+
+  <!-- Functional Requirements -->
+  <div class="section">
+    <h2>Functional Requirements</h2>
+
+    <h3>P0 &mdash; Must Have (MVP)</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Requirement</th>
+          <th>Acceptance Criteria</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FR-01</td>
+          <td>Paste raw feedback input</td>
+          <td>Text area accepts free-text feedback; handles 1&ndash;500 entries; shows entry count after paste</td>
+        </tr>
+        <tr>
+          <td>FR-02</td>
+          <td>Agentic analysis pipeline</td>
+          <td>Clicking &ldquo;Analyze&rdquo; triggers the multi-step pipeline with visible progress (step indicators)</td>
+        </tr>
+        <tr>
+          <td>FR-03</td>
+          <td>Theme clustering</td>
+          <td>Agent groups feedback into 3&ndash;12 themes with auto-generated labels; no pre-defined taxonomy required</td>
+        </tr>
+        <tr>
+          <td>FR-04</td>
+          <td>Theme frequency scoring</td>
+          <td>Each theme shows entry count and percentage of total feedback</td>
+        </tr>
+        <tr>
+          <td>FR-05</td>
+          <td>Sentiment analysis per theme</td>
+          <td>Each theme shows sentiment breakdown (positive/negative/neutral) with color-coded indicators</td>
+        </tr>
+        <tr>
+          <td>FR-06</td>
+          <td>Representative quotes</td>
+          <td>Each theme displays 2&ndash;3 auto-selected quotes from the original feedback</td>
+        </tr>
+        <tr>
+          <td>FR-07</td>
+          <td>Feature request extraction</td>
+          <td>Standalone section listing feature requests with frequency count, separate from general themes</td>
+        </tr>
+        <tr>
+          <td>FR-08</td>
+          <td>Executive summary</td>
+          <td>Auto-generated 3&ndash;5 bullet executive summary at the top of the report</td>
+        </tr>
+        <tr>
+          <td>FR-09</td>
+          <td>Theme drill-down</td>
+          <td>Clicking a theme expands to show all raw entries classified under it</td>
+        </tr>
+        <tr>
+          <td>FR-10</td>
+          <td>Pipeline progress visibility</td>
+          <td>Users see which step the agent is on (Ingesting &rarr; Clustering &rarr; Scoring &rarr; Extracting &rarr; Synthesizing)</td>
+        </tr>
+        <tr>
+          <td>FR-11</td>
+          <td>Sample data</td>
+          <td>&ldquo;Try with sample data&rdquo; button loads pre-built feedback dataset so users can see the tool in action immediately</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>P1 &mdash; Should Have (v2)</h3>
+    <ul>
+      <li>Export report as PDF or Markdown</li>
+      <li>Compare two feedback sets (e.g., before/after a feature launch)</li>
+      <li>Custom theme labels &mdash; user can rename or merge agent-generated themes</li>
+      <li>Feedback source tagging (support, reviews, surveys) with per-source filtering</li>
+      <li>Saved reports with history</li>
+    </ul>
+
+    <h3>P2 &mdash; Nice to Have (Future)</h3>
+    <ul>
+      <li>CSV/JSON file upload (not just paste)</li>
+      <li>Integration with support tools (Zendesk, Intercom) for direct import</li>
+      <li>Trend analysis across multiple time periods</li>
+      <li>Slack bot that posts weekly feedback digests</li>
+      <li>Team workspace with shared reports</li>
+    </ul>
+  </div>
+
+  <!-- Key UX Design Decisions -->
+  <div class="section">
+    <h2>Key UX Design Decisions</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Decision</th>
+          <th>Rationale</th>
+          <th>Alternative Considered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Paste-first input (not file upload) for MVP</td>
+          <td>Lowest friction for initial use; works with any source; no file format parsing needed</td>
+          <td>File upload &mdash; deferred to v2 to keep MVP simple</td>
+        </tr>
+        <tr>
+          <td>Visible pipeline steps during analysis</td>
+          <td>Makes the agentic behavior transparent; users see the AI &ldquo;working&rdquo; rather than waiting for a black box</td>
+          <td>Single loading spinner &mdash; rejected because it hides the multi-step intelligence</td>
+        </tr>
+        <tr>
+          <td>Agent-generated taxonomy (not predefined categories)</td>
+          <td>Every product&rsquo;s feedback is different; predefined categories would miss domain-specific themes</td>
+          <td>Predefined category list &mdash; rejected as too rigid</td>
+        </tr>
+        <tr>
+          <td>Sentiment shown as distribution, not single score</td>
+          <td>A theme can have mixed sentiment (some positive, some negative); a single score hides this nuance</td>
+          <td>Single sentiment label per theme &mdash; rejected as oversimplified</td>
+        </tr>
+        <tr>
+          <td>Quotes auto-selected, not user-picked</td>
+          <td>Reduces manual effort; agent picks quotes that are most representative of the cluster</td>
+          <td>User manually selects quotes &mdash; rejected as too slow</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Technical Architecture -->
+  <div class="section">
+    <h2>Technical Architecture (MVP)</h2>
+    <ul>
+      <li><strong>Frontend:</strong> React 19 + TypeScript + Tailwind CSS (Vite build)</li>
+      <li><strong>AI Backend:</strong> Claude API (Anthropic) via client-side calls with user-provided API key</li>
+      <li><strong>Agentic Pipeline:</strong> Sequential Claude API calls with structured JSON output at each step</li>
+      <li><strong>State Management:</strong> React useState + useReducer for pipeline state machine</li>
+      <li><strong>Persistence:</strong> localStorage for saved reports and API key</li>
+      <li><strong>Hosting:</strong> GitHub Pages (static build)</li>
+    </ul>
+    <div class="callout">
+      <strong>Why client-side AI calls?</strong> For an MVP / portfolio project, calling the Claude API directly from the client (with the user&rsquo;s own API key) eliminates the need for a backend server. This keeps deployment simple (static hosting) while demonstrating the full agentic pipeline. A production version would route through a backend proxy for key security.
+    </div>
+  </div>
+
+  <!-- Non-Functional Requirements -->
+  <div class="section">
+    <h2>Non-Functional Requirements</h2>
+    <ul>
+      <li><strong>Performance:</strong> Analysis of 100 feedback entries should complete in &lt; 30 seconds</li>
+      <li><strong>Data privacy:</strong> No feedback data is stored server-side; all processing uses the user&rsquo;s own API key; data stays in their browser</li>
+      <li><strong>Accessibility:</strong> Keyboard-navigable; screen reader-friendly report output; sufficient color contrast</li>
+      <li><strong>Responsive:</strong> Usable on tablet and desktop viewports (mobile is secondary for this workflow)</li>
+      <li><strong>Error handling:</strong> Graceful degradation if any pipeline step fails; ability to retry individual steps</li>
+    </ul>
+  </div>
+
+  <!-- Assumptions & Risks -->
+  <div class="section">
+    <h2>Assumptions &amp; Risks</h2>
+
+    <h3>Assumptions</h3>
+    <ul>
+      <li>Users have access to a Claude API key (or the app provides a demo mode with sample data)</li>
+      <li>100&ndash;500 entries is a typical batch size for synthesis; the tool doesn&rsquo;t need to handle 10K+ entries</li>
+      <li>Users want speed over perfect accuracy &mdash; a good-enough synthesis in 30 seconds beats a perfect one in 3 hours</li>
+      <li>Theme clustering doesn&rsquo;t need to match a predefined taxonomy; emergent categories are more useful</li>
+    </ul>
+
+    <h3>Risks</h3>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Likelihood</th>
+          <th>Impact</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Clustering inconsistency &mdash; same feedback analyzed twice produces different themes</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td>Use temperature=0 and structured prompts; allow users to rename/merge themes</td>
+        </tr>
+        <tr>
+          <td>API cost concerns &mdash; multi-step pipeline uses 4&ndash;5 API calls per analysis</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td>Show estimated token usage before analysis; optimize prompts to minimize tokens</td>
+        </tr>
+        <tr>
+          <td>Users don&rsquo;t trust AI-generated categories</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-red">High</span></td>
+          <td>Drill-down view lets users verify every entry&rsquo;s classification; transparent pipeline builds trust</td>
+        </tr>
+        <tr>
+          <td>Large input causes API timeout or token limit</td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td><span class="tag tag-red">High</span></td>
+          <td>Chunk large inputs and process in batches; show progress per batch</td>
+        </tr>
+        <tr>
+          <td>Sentiment analysis accuracy on short entries</td>
+          <td><span class="tag tag-amber">Medium</span></td>
+          <td><span class="tag tag-green">Low</span></td>
+          <td>Show confidence scores; let users override sentiment on individual entries</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Success Metrics -->
+  <div class="section">
+    <h2>Success Metrics</h2>
+    <table class="prd-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Target</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Analysis completion rate (user pastes feedback &rarr; views full report)</td>
+          <td>&ge; 80%</td>
+          <td>Users who start an analysis should see it through; drop-off indicates friction</td>
+        </tr>
+        <tr>
+          <td>Theme accuracy (user doesn&rsquo;t need to rename/merge more than 20% of themes)</td>
+          <td>&ge; 80%</td>
+          <td>The AI-generated taxonomy should be useful out of the box</td>
+        </tr>
+        <tr>
+          <td>Time to insight (paste &rarr; reading executive summary)</td>
+          <td>&lt; 60 sec for 100 entries</td>
+          <td>Must be dramatically faster than manual synthesis to justify the tool</td>
+        </tr>
+        <tr>
+          <td>Quote relevance (user finds auto-selected quotes useful)</td>
+          <td>&ge; 70%</td>
+          <td>If quotes aren&rsquo;t representative, the report loses credibility</td>
+        </tr>
+        <tr>
+          <td>Return usage (user runs 3+ analyses)</td>
+          <td>&ge; 40%</td>
+          <td>Indicates the tool earns a place in the PM&rsquo;s recurring workflow</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Out of Scope -->
+  <div class="section">
+    <h2>Out of Scope (MVP)</h2>
+    <div class="callout callout-warn">
+      <strong>Explicitly excluded</strong> to ship a focused MVP:
+    </div>
+    <ul>
+      <li>User accounts or authentication</li>
+      <li>Backend server &mdash; all processing happens client-side with user&rsquo;s API key</li>
+      <li>Real-time collaboration or shared reports</li>
+      <li>Integration with external tools (Zendesk, Intercom, Jira)</li>
+      <li>Historical trend analysis across multiple feedback batches</li>
+      <li>Custom AI model fine-tuning</li>
+    </ul>
+  </div>
+
+  <!-- Open Questions -->
+  <div class="section">
+    <h2>Open Questions</h2>
+    <ol>
+      <li>Should the tool support multiple input formats in MVP (CSV columns, JSON arrays) or just free-text paste?</li>
+      <li>Is there value in letting users define &ldquo;focus areas&rdquo; before analysis (e.g., &ldquo;I care most about onboarding feedback&rdquo;) to guide the clustering?</li>
+      <li>Should theme labels be noun phrases (&ldquo;onboarding confusion&rdquo;) or problem statements (&ldquo;users struggle to complete onboarding&rdquo;)?</li>
+      <li>Would a comparison mode (before/after a feature launch) be a P1 or P2 feature?</li>
+      <li>Should the tool recommend which themes map to which product areas, or is that too opinionated for a general-purpose tool?</li>
+    </ol>
+  </div>
+
+  <div class="prd-footer">
+    PRD by Nicole Surawski &middot; March 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
+  </div>
+
+</div>
+
+</body>
+</html>
