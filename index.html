@@ -48,12 +48,12 @@
     }
     .hero h1 { font-size: 2.6rem; font-weight: 700; margin-bottom: 8px; }
     .hero .tagline { font-size: 1.1rem; opacity: 0.9; margin-bottom: 28px; max-width: 560px; margin-left: auto; margin-right: auto; }
-    .hero .nav a {
+    .hero nav a {
       color: #fff; text-decoration: none; margin: 0 10px; padding: 8px 20px;
       border: 1.5px solid rgba(255,255,255,0.45); border-radius: 6px; font-size: 0.9rem;
       transition: background 0.2s, border-color 0.2s;
     }
-    .hero .nav a:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+    .hero nav a:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
 
     /* ── Sections ── */
     section { max-width: var(--max-width); margin: 0 auto; padding: 60px 24px; }
@@ -179,6 +179,12 @@
       transform: translateY(0);
     }
 
+    /* ── Accessibility: reduce motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fade-in { opacity: 1; transform: none; transition: none; }
+    }
+
     /* ── Footer ── */
     footer {
       text-align: center; padding: 40px 24px; font-size: 0.82rem; color: var(--color-muted);
@@ -190,8 +196,8 @@
       .hero { padding: 50px 18px 40px; }
       .hero h1 { font-size: 1.8rem; }
       .hero .tagline { font-size: 0.95rem; }
-      .hero .nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-      .hero .nav a { margin: 0; padding: 7px 16px; font-size: 0.82rem; }
+      .hero nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .hero nav a { margin: 0; padding: 7px 16px; font-size: 0.82rem; }
       section { padding: 32px 16px; }
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
       .stat-card .number { font-size: 1.3rem; }
@@ -220,12 +226,12 @@
     <div class="label">Product Management</div>
     <h1>Nicole Surawski</h1>
     <p class="tagline">Solutions Consultant transitioning to Product Management | B2B SaaS</p>
-    <div class="nav">
+    <nav aria-label="Main navigation">
       <a href="#impact">Impact</a>
       <a href="#work-samples">Work Samples</a>
       <a href="#contact">Contact</a>
       <a href="Nicole_Surawski_Resume_PM.pdf" target="_blank" rel="noopener">Resume</a>
-    </div>
+    </nav>
   </header>
 
   <!-- About -->
@@ -506,15 +512,15 @@
         I bring something most junior PMs don't: I've managed real client relationships, navigated technical crises, grown accounts, and maintained trust across dozens of stakeholders simultaneously. That's not a background I have to translate into PM skills &mdash; it <em>is</em> PM skills.
       </p>
       <div class="cta-links">
-        <a href="mailto:nicolesurawski@gmail.com" class="primary">Email Me</a>
-        <a href="https://linkedin.com/in/nicole-surawski" class="secondary" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="Nicole_Surawski_Resume_PM.pdf" class="secondary" target="_blank" rel="noopener">Resume (PDF)</a>
+        <a href="mailto:nicolesurawski@gmail.com" class="primary" aria-label="Send email to Nicole Surawski">Email Me</a>
+        <a href="https://www.linkedin.com/in/nicole-surawski" class="secondary" target="_blank" rel="noopener" aria-label="View Nicole Surawski's LinkedIn profile">LinkedIn</a>
+        <a href="Nicole_Surawski_Resume_PM.pdf" class="secondary" target="_blank" rel="noopener" aria-label="Download resume as PDF">Resume (PDF)</a>
       </div>
       <p class="cta-availability">Available for: Full-time B2B SaaS PM roles | Open to remote or hybrid</p>
     </div>
   </section>
 
-  <footer>
+  <footer role="contentinfo">
     Portfolio compiled March 2026 &middot; Nicole Surawski &middot; Product Management
   </footer>
 
