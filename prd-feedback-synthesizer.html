@@ -224,7 +224,7 @@
     </div>
     <div class="meta-item">
       <div class="label">Version</div>
-      <div class="value">v1.0</div>
+      <div class="value">v1.1</div>
     </div>
     <div class="meta-item">
       <div class="label">Status</div>
@@ -373,6 +373,8 @@
       <li>Structured JSON output (using tool_use or JSON mode)</li>
       <li>The previous step&rsquo;s output as context</li>
       <li>Step-specific system prompts optimized for that task</li>
+      <li><strong>Model selection by step</strong> &mdash; claude-haiku-4-5 for fast, deterministic steps (ingest, extract); claude-sonnet-4-6 for reasoning-heavy steps (cluster, synthesize)</li>
+      <li><strong>Prompt caching</strong> applied to shared context (system prompt + raw input) so it&rsquo;s only billed once across all five steps, significantly reducing per-analysis cost</li>
     </ul>
   </div>
 
@@ -455,6 +457,7 @@
       <li>Custom theme labels &mdash; user can rename or merge agent-generated themes</li>
       <li>Feedback source tagging (support, reviews, surveys) with per-source filtering</li>
       <li>Saved reports with history</li>
+      <li>Extended thinking mode on the clustering step &mdash; for ambiguous or heavily overlapping feedback sets, letting the model reason through edge cases before committing to a taxonomy produces more consistent theme boundaries</li>
     </ul>
 
     <h3>P2 &mdash; Nice to Have (Future)</h3>
@@ -513,8 +516,8 @@
     <h2>Technical Architecture (MVP)</h2>
     <ul>
       <li><strong>Frontend:</strong> React 19 + TypeScript + Tailwind CSS (Vite build)</li>
-      <li><strong>AI Backend:</strong> Claude API (Anthropic) via client-side calls with user-provided API key</li>
-      <li><strong>Agentic Pipeline:</strong> Sequential Claude API calls with structured JSON output at each step</li>
+      <li><strong>AI Backend:</strong> Claude API (Anthropic) via client-side calls with user-provided API key; claude-haiku-4-5 and claude-sonnet-4-6 selected per pipeline step based on task complexity</li>
+      <li><strong>Agentic Pipeline:</strong> Sequential Claude API calls with structured JSON output at each step; prompt caching applied to the shared raw-input context block to reduce token costs across the multi-step run</li>
       <li><strong>State Management:</strong> React useState + useReducer for pipeline state machine</li>
       <li><strong>Persistence:</strong> localStorage for saved reports and API key</li>
       <li><strong>Hosting:</strong> GitHub Pages (static build)</li>
@@ -569,7 +572,7 @@
           <td>API cost concerns &mdash; multi-step pipeline uses 4&ndash;5 API calls per analysis</td>
           <td><span class="tag tag-amber">Medium</span></td>
           <td><span class="tag tag-green">Low</span></td>
-          <td>Show estimated token usage before analysis; optimize prompts to minimize tokens</td>
+          <td>Prompt caching on shared context reduces repeated token charges across steps; model tiering (Haiku for simple steps) cuts per-call cost; show estimated cost before analysis runs</td>
         </tr>
         <tr>
           <td>Users don&rsquo;t trust AI-generated categories</td>
@@ -663,7 +666,7 @@
   </div>
 
   <div class="prd-footer">
-    PRD by Nicole Surawski &middot; March 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
+    PRD by Nicole Surawski &middot; Updated May 2026 &middot; <a href="index.html" style="color: var(--color-accent); text-decoration: none;">Back to Portfolio</a>
   </div>
 
 </div>
